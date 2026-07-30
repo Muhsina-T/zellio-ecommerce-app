@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@layer components {
+  .input {
+    @apply w-full
+      rounded-xl
+      border
+      border-[#D7D7CD]
+      bg-[#FAFAF7]
+      px-4
+      py-3
+      text-[#13160F]
+      placeholder:text-[#7A7E73]
+      outline-none
+      transition
+      focus:border-[#AAD10A]
+      focus:ring-4
+      focus:ring-[#AAD10A]/20;
+  }
+
+  .btn-primary {
+    @apply bg-[#AAD10A]
+      text-[#0A0D0A]
+      font-semibold
+      px-6
+      py-3
+      rounded-xl
+      transition-all
+      duration-300
+      hover:bg-[#C8EE2C]
+      hover:-translate-y-0.5
+      shadow-sm;
+  }
+}
+
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 5;
+  box-sizing: border-box;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body */
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #020617;
+  
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  border: none;
+}
+
+/* Images */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
