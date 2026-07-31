@@ -2,34 +2,11 @@
 
 @layer components {
   .input {
-    @apply w-full
-      rounded-xl
-      border
-      border-[#D7D7CD]
-      bg-[#FAFAF7]
-      px-4
-      py-3
-      text-[#13160F]
-      placeholder:text-[#7A7E73]
-      outline-none
-      transition
-      focus:border-[#AAD10A]
-      focus:ring-4
-      focus:ring-[#AAD10A]/20;
+    @apply w-full rounded-xl border border-[#D7D7CD] bg-[#FAFAF7] px-4 py-3 text-[#13160F] placeholder:text-[#7A7E73] outline-none transition focus:border-[#AAD10A] focus:ring-4 focus:ring-[#AAD10A]/20;
   }
 
   .btn-primary {
-    @apply bg-[#AAD10A]
-      text-[#0A0D0A]
-      font-semibold
-      px-6
-      py-3
-      rounded-xl
-      transition-all
-      duration-300
-      hover:bg-[#C8EE2C]
-      hover:-translate-y-0.5
-      shadow-sm;
+    @apply bg-[#AAD10A] text-[#0A0D0A] font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:bg-[#C8EE2C] hover:-translate-y-0.5 shadow-sm;
   }
 }
 
@@ -38,7 +15,7 @@
 /* Reset */
 * {
   margin: 0;
-  padding: 5px;
+  padding: 5;
   box-sizing: border-box;
 }
 
@@ -51,7 +28,7 @@ html {
 body {
   font-family: Inter, Arial, sans-serif;
   background: #020617;
-  
+
 }
 
 /* Links */
@@ -85,4 +62,3 @@ img {
 ::-webkit-scrollbar-track {
   background: #020617;
 }
-
