@@ -28,7 +28,8 @@ export default function ProductGallery({
           border
           border-[#E5E5DD]
           rounded-3xl
-          p-6
+          p-4
+          lg:p-6
           shadow-sm
         "
       >
@@ -37,14 +38,18 @@ export default function ProductGallery({
           alt="Product"
           className="
             w-full
-            h-[450px]
+            h-[250px]
+            sm:h-[350px]
+            lg:h-[450px]
             object-contain
           "
         />
       </div>
 
+      <div style={{ height: '24px' }}></div>
+
       {/* Thumbnails */}
-      <div className="flex flex-wrap gap-4 mt-6">
+      <div className="flex flex-wrap gap-4">
         {variants.map((variant) => {
           const isActive = active === variant.image;
 
@@ -57,8 +62,10 @@ export default function ProductGallery({
                 onSelectVariant(variant);
               }}
               className={`
-                w-20
-                h-20
+                w-14
+                h-14
+                lg:w-20
+                lg:h-20
                 rounded-2xl
                 overflow-hidden
                 border-2

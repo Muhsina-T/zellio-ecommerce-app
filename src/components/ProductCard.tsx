@@ -35,8 +35,8 @@ export default function ProductCard({ product }: Props) {
   transition-all
   duration-300
   cursor-pointer
-  px-6
-  py-5
+  p-3
+  lg:p-4
   "
 >
 
@@ -57,10 +57,10 @@ export default function ProductCard({ product }: Props) {
       inline-block
       bg-[#AAD10A]/15
       text-[#5C8A05]
-      text-xs
+      text-[10px]
       font-semibold
-      px-3
-      py-1
+      px-2.5
+      py-0.5
       rounded-full
       "
     >
@@ -79,8 +79,8 @@ export default function ProductCard({ product }: Props) {
       }}
 
       className={`
-      h-10
-      w-10
+      h-8
+      w-8
       rounded-full
       bg-[#FAFAF7]
       border
@@ -104,7 +104,7 @@ export default function ProductCard({ product }: Props) {
       aria-label="toggle-wishlist"
     >
 
-      <Heart size={18}/>
+      <Heart size={16}/>
 
     </button>
 
@@ -126,7 +126,8 @@ export default function ProductCard({ product }: Props) {
 
     className="
     mx-auto
-    h-56
+    h-32
+    lg:h-44
     object-contain
     group-hover:scale-105
     transition
@@ -140,110 +141,32 @@ export default function ProductCard({ product }: Props) {
 
 
 
-  {/* Product Name */}
+  {/* Content Area */}
+  <div className="mt-2 px-1">
+    
+    {/* Row 1: Name and Price */}
+    <div className="flex justify-between items-start gap-2">
+      <h3 className="text-[13px] sm:text-sm lg:text-base text-[#13160F] font-bold line-clamp-2 leading-tight">
+        {product.name}
+      </h3>
+      <h2 className="text-sm sm:text-base lg:text-lg font-bold text-[#5C8A05] whitespace-nowrap shrink-0">
+        ₹{product.price.toLocaleString()}
+      </h2>
+    </div>
 
-  <h3
-    className="
-    text-xl
-    text-[#13160F]
-    font-semibold
-    px-2
-    "
-  >
-
-    {product.name}
-
-  </h3>
-
-
-
-
-
-  {/* Details */}
-
-  <p
-    className="
-    mt-2
-    text-[#7A7E73]
-    px-2
-    "
-  >
-
-    {product.storage} • {product.color}
-
-  </p>
-
-
-
-
-
-
-
-  {/* Rating */}
-
-  <div
-    className="
-    mt-3
-    flex
-    items-center
-    gap-2
-    px-2
-    "
-  >
-
-    <Star
-      size={18}
-      className="
-      fill-[#B88A2D]
-      text-[#B88A2D]
-      "
-    />
-
-    <span
-      className="
-      text-[#3F443A]
-      font-medium
-      "
-    >
-
-      {product.rating}
-
-    </span>
-
-
-  </div>
-
-
-
-
-
-
-  {/* Price */}
-
-  <div
-    className="
-    mt-5
-    flex
-    items-center
-    justify-between
-    "
-  >
-
-
-    <h2
-      className="
-      text-2xl
-      font-bold
-      text-[#5C8A05]
-      px-2
-      "
-    >
-
-      ₹{product.price.toLocaleString()}
-
-    </h2>
-
-
+    {/* Row 2: Details and Rating */}
+    <div className="flex justify-between items-center mt-1.5 lg:mt-2.5">
+      <p className="text-[10px] sm:text-xs lg:text-sm text-[#7A7E73] truncate pr-2">
+        {product.storage} • {product.color}
+      </p>
+      
+      <div className="flex items-center gap-1 shrink-0 bg-[#F5F5F0] px-1.5 py-0.5 rounded-md lg:px-2 lg:py-1">
+        <Star size={10} className="fill-[#B88A2D] text-[#B88A2D] lg:w-3.5 lg:h-3.5" />
+        <span className="text-[10px] sm:text-xs lg:text-sm text-[#3F443A] font-medium">
+          {product.rating}
+        </span>
+      </div>
+    </div>
 
   </div>
 

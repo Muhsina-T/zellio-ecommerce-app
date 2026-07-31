@@ -43,11 +43,12 @@ export default function Wishlist() {
             lg:text-4xl
             font-bold
             text-[#13160F]
-            mb-8
           "
         >
           Your Wishlist
         </h1>
+
+        <div style={{ height: '16px' }}></div>
 
 
 

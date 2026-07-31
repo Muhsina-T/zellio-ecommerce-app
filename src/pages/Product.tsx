@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 import ProductDetails from "../components/ProductDetails";
 
@@ -6,6 +7,7 @@ import useProducts from "../hooks/useProducts";
 
 export default function Product() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { products } = useProducts();
 
@@ -51,6 +53,23 @@ export default function Product() {
         py-6
       "
     >
+      <button
+        onClick={() => navigate(-1)}
+        className="
+          p-2
+          rounded-full
+          bg-[#FFFFFF]
+          border
+          border-[#E5E5DD]
+          hover:bg-[#F2F2EC]
+          transition-colors
+          mb-6
+          inline-flex
+        "
+      >
+        <ArrowLeft size={24} className="text-[#13160F]" />
+      </button>
+
       <ProductDetails product={product} />
     </div>
   );

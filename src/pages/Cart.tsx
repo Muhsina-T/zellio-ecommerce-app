@@ -1,9 +1,12 @@
 import useCart from "../hooks/useCart";
 import CartItem from "../components/CartItem";
 import CartSummary from "../components/CartSummary";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function Cart() {
   const { cart } = useCart();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -16,17 +19,32 @@ export default function Cart() {
       "
     >
 
-      <h1
-        className="
-          text-3xl
-          lg:text-4xl
-          font-bold
-          mb-8
-          text-[#13160F]
-        "
-      >
-        My Cart
-      </h1>
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="
+            p-2
+            rounded-full
+            bg-[#FFFFFF]
+            border
+            border-[#E5E5DD]
+            hover:bg-[#F2F2EC]
+            transition-colors
+          "
+        >
+          <ArrowLeft size={24} className="text-[#13160F]" />
+        </button>
+        <h1
+          className="
+            text-3xl
+            lg:text-4xl
+            font-bold
+            text-[#13160F]
+          "
+        >
+          My Cart
+        </h1>
+      </div>
 
 
       <div
@@ -43,7 +61,11 @@ export default function Cart() {
         <div
           className="
             lg:col-span-2
-            space-y-5
+            grid
+            grid-cols-2
+            lg:grid-cols-1
+            gap-3
+            lg:gap-5
           "
         >
 

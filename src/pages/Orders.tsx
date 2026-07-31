@@ -2,9 +2,12 @@ import useOrder from "../hooks/useOrder";
 import type { Order } from "../types/Order";
 import OrderCard from "../components/OrderCard";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function Orders() {
   const { orders } = useOrder();
+  const navigate = useNavigate();
 
   return (
     <motion.div
@@ -21,17 +24,34 @@ export default function Orders() {
       "
     >
 
-      <h1
-        className="
-          text-3xl
-          lg:text-4xl
-          font-bold
-          text-[#13160F]
-          mb-8
-        "
-      >
-        My Orders
-      </h1>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="
+            p-2
+            rounded-full
+            bg-[#FFFFFF]
+            border
+            border-[#E5E5DD]
+            hover:bg-[#F2F2EC]
+            transition-colors
+          "
+        >
+          <ArrowLeft size={24} className="text-[#13160F]" />
+        </button>
+        <h1
+          className="
+            text-3xl
+            lg:text-4xl
+            font-bold
+            text-[#13160F]
+          "
+        >
+          My Orders
+        </h1>
+      </div>
+
+      <div style={{ height: '16px' }}></div>
 
 
 
@@ -62,7 +82,7 @@ export default function Orders() {
 
       ) : (
 
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
 
           {orders.map((order: Order) => (
 

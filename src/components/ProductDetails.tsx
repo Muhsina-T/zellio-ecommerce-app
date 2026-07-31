@@ -60,10 +60,13 @@ export default function ProductDetails({ product }: Props) {
       className="
       bg-[#AAD10A]/15
       text-[#5C8A05]
-      px-4
-      py-2
+      px-3
+      py-1
+      lg:px-4
+      lg:py-2
       rounded-full
-      text-sm
+      text-xs
+      lg:text-sm
       font-semibold
       "
     >
@@ -79,10 +82,13 @@ export default function ProductDetails({ product }: Props) {
 
     <h1
       className="
-      text-5xl
+      text-3xl
+      lg:text-5xl
       font-bold
-      mt-6
-      py-3
+      mt-4
+      lg:mt-6
+      py-1
+      lg:py-3
       text-[#13160F]
       "
     >
@@ -99,9 +105,14 @@ export default function ProductDetails({ product }: Props) {
     <p
       className="
       text-[#7A7E73]
-      mt-5
-      leading-7
-      py-3
+      text-sm
+      lg:text-base
+      mt-3
+      lg:mt-5
+      leading-6
+      lg:leading-7
+      py-1
+      lg:py-3
       "
     >
       {product.description}
@@ -117,11 +128,14 @@ export default function ProductDetails({ product }: Props) {
 
     <h2
       className="
-      text-4xl
+      text-2xl
+      lg:text-4xl
       font-bold
       text-[#5C8A05]
-      mt-8
-      py-2
+      mt-4
+      lg:mt-8
+      py-1
+      lg:py-2
       "
     >
 
@@ -139,8 +153,12 @@ export default function ProductDetails({ product }: Props) {
 
     <div
       className="
-      mt-5
-      space-y-2
+      mt-4
+      lg:mt-5
+      space-y-1
+      lg:space-y-2
+      text-sm
+      lg:text-base
       text-[#3F443A]
       "
     >
@@ -185,8 +203,10 @@ export default function ProductDetails({ product }: Props) {
     <div
       className="
       flex
-      gap-5
-      mt-8
+      gap-3
+      lg:gap-5
+      mt-6
+      lg:mt-8
       "
     >
 
@@ -232,12 +252,18 @@ export default function ProductDetails({ product }: Props) {
         className="
         bg-[#AAD10A]
         text-[#0A0D0A]
-        px-8
-        py-4
-        rounded-2xl
+        px-4
+        py-3
+        lg:px-8
+        lg:py-4
+        rounded-xl
+        lg:rounded-2xl
         font-semibold
+        text-sm
+        lg:text-base
         hover:bg-[#C8EE2C]
         transition
+        flex-1
         "
       >
 
@@ -289,12 +315,18 @@ export default function ProductDetails({ product }: Props) {
         className="
         bg-[#13160F]
         text-white
-        px-8
-        py-4
-        rounded-2xl
+        px-4
+        py-3
+        lg:px-8
+        lg:py-4
+        rounded-xl
+        lg:rounded-2xl
         font-semibold
+        text-sm
+        lg:text-base
         hover:bg-[#3F443A]
         transition
+        flex-1
         "
 
       >

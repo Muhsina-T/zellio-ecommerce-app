@@ -54,7 +54,7 @@ export default function OrderTable() {
         </table>
       </div>
 
-      <div className="lg:hidden space-y-4 mt-4">
+      <div className="lg:hidden space-y-2 mt-4">
         {orders.map((order) => (
           <div
             key={order.id}

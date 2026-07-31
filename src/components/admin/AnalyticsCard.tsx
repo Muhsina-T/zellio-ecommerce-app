@@ -5,6 +5,7 @@ type Props = {
   value: string | number;
   icon: ReactNode;
   color: string;
+  size?: "small" | "default";
 };
 
 
@@ -13,15 +14,17 @@ export default function AnalyticsCard({
   value,
   icon,
   color,
+  size = "default",
 }: Props) {
+  const isSmall = size === "small";
 
   return (
 
     <div
-      className="
+      className={`
       bg-white
       rounded-3xl
-      p-6
+      ${isSmall ? "p-2 sm:p-3" : "p-6"}
       border
       border-[#E5E5DD]
       shadow-sm
@@ -29,39 +32,37 @@ export default function AnalyticsCard({
       hover:shadow-md
       transition-all
       duration-300
-      "
+      `}
     >
 
 
       <div
-        className="
+        className={`
         flex
-        justify-between
-        items-center
-        "
+        ${isSmall ? "flex-col 2xl:flex-row gap-2 2xl:gap-0 items-start 2xl:items-center justify-between" : "justify-between items-center"}
+        `}
       >
 
 
         <div>
 
           <p
-            className="
+            className={`
             text-[#7A7E73]
-            text-sm
+            ${isSmall ? "text-[10px] sm:text-xs" : "text-sm"}
             font-medium
-            "
+            `}
           >
             {title}
           </p>
 
 
           <h2
-            className="
-            text-4xl
+            className={`
+            ${isSmall ? "text-base sm:text-lg mt-0.5" : "text-4xl mt-3"}
             font-bold
-            mt-3
             text-[#13160F]
-            "
+            `}
           >
             {value}
           </h2>
@@ -73,8 +74,7 @@ export default function AnalyticsCard({
 
         <div
           className={`
-          p-4
-          rounded-2xl
+          ${isSmall ? "p-2 rounded-lg" : "p-4 rounded-2xl"}
           bg-[#AAD10A]/10
           ${color}
           `}

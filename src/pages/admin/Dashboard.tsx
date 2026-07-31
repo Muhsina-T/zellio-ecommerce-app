@@ -28,10 +28,6 @@ export default function Dashboard() {
   );
 
   const totalOrders = orders.length;
-
-  const totalCustomers = 0;
-
-
   return (
 
     <div
@@ -49,76 +45,66 @@ export default function Dashboard() {
       <main
         className="
         flex-1
-        p-8
+        p-4
+        sm:p-6
+        lg:p-8
+        pb-24
         "
       >
 
+        <div className="flex items-center bg-white lg:bg-transparent border-b border-[#E5E5DD] lg:border-none p-4 lg:p-0 -mx-4 sm:-mx-6 lg:mx-0 sticky top-0 z-30 lg:static">
+          <h1 className="text-xl lg:text-3xl font-bold text-[#13160F]">
+            Dashboard
+          </h1>
+        </div>
 
-        <h1
-          className="
-          text-5xl
-          font-bold
-          mb-10
-          text-[#13160F]
-          "
-        >
-          Dashboard
-        </h1>
-
-
+        {/* Explicit mobile spacer */}
+        <div className="h-6 lg:h-8"></div>
 
         <div
           className="
           grid
-          md:grid-cols-2
-          xl:grid-cols-4
-          gap-6
+          grid-cols-3
+          gap-2
+          sm:gap-4
+          max-w-xl
           "
         >
-
 
           <AnalyticsCard
             title="Total Sales"
             value={`₹${totalSales.toLocaleString()}`}
-            icon={<IndianRupee size={36}/>}
+            icon={<IndianRupee size={18}/>}
             color="text-[#5C8A05]"
+            size="small"
           />
-
 
           <AnalyticsCard
             title="Orders"
             value={totalOrders}
-            icon={<ShoppingCart size={36}/>}
+            icon={<ShoppingCart size={18}/>}
             color="text-[#AAD10A]"
+            size="small"
           />
-
 
           <AnalyticsCard
             title="Products"
             value={totalProducts}
-            icon={<Package size={36}/>}
+            icon={<Package size={18}/>}
             color="text-[#B88A2D]"
+            size="small"
           />
-
-
-          <AnalyticsCard
-            title="Customers"
-            value={totalCustomers}
-            icon={<Users size={36}/>}
-            color="text-[#13160F]"
-          />
-
 
         </div>
 
-
+        {/* Explicit spacer to guarantee space between sections */}
+        <div className="h-6 lg:h-8"></div>
 
         <div
           className="
           grid
           xl:grid-cols-2
           gap-8
-          mt-10
           "
         >
            

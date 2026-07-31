@@ -30,8 +30,8 @@ export default function OrderCard({ order }: Props) {
     hover:shadow-lg
     transition-all
     duration-300
-    p-4
-    sm:p-6
+    p-3
+    sm:p-4
     "
   >
 
@@ -53,7 +53,7 @@ export default function OrderCard({ order }: Props) {
 
         <h2
           className="
-          text-xl
+          text-lg
           font-bold
           text-[#13160F]
           "
@@ -64,6 +64,8 @@ export default function OrderCard({ order }: Props) {
 
         <p
           className="
+          text-xs
+          sm:text-sm
           text-[#7A7E73]
           "
         >
@@ -81,10 +83,10 @@ export default function OrderCard({ order }: Props) {
         w-fit
         bg-[#AAD10A]/15
         text-[#5C8A05]
-        text-sm
+        text-xs
         font-medium
-        px-4
-        py-2
+        px-3
+        py-1.5
         rounded-full
         "
       >
@@ -102,7 +104,7 @@ export default function OrderCard({ order }: Props) {
 
     {/* Items */}
 
-    <div className="mt-6 space-y-3">
+    <div className="mt-4 space-y-2">
 
 
       {order.items.map((item)=>{
@@ -127,10 +129,10 @@ export default function OrderCard({ order }: Props) {
             flex-col
             sm:flex-row
             sm:justify-between
-            gap-4
+            gap-3
             border-b
             border-[#E5E5DD]
-            pb-4
+            pb-3
             w-full
             "
 
@@ -141,6 +143,7 @@ export default function OrderCard({ order }: Props) {
             <p
               className="
               font-medium
+              text-sm
               text-[#3F443A]
               break-words
               leading-6
@@ -180,6 +183,7 @@ export default function OrderCard({ order }: Props) {
               <p
                 className="
                 font-semibold
+                text-sm
                 text-[#13160F]
                 "
               >
@@ -252,11 +256,11 @@ export default function OrderCard({ order }: Props) {
                       className="
                       w-full
                       sm:w-auto
-                      text-sm
+                      text-xs
                       bg-[#AAD10A]
                       text-[#0A0D0A]
-                      px-4
-                      py-2
+                      px-3
+                      py-1.5
                       rounded-lg
                       font-medium
                       hover:bg-[#C8EE2C]
@@ -301,10 +305,9 @@ export default function OrderCard({ order }: Props) {
 
     <h3
       className="
-      mt-6
-      text-lg
-      sm:text-xl
-      lg:text-2xl
+      mt-4
+      text-base
+      sm:text-lg
       font-bold
       text-[#5C8A05]
       "
@@ -321,7 +324,7 @@ export default function OrderCard({ order }: Props) {
 
     {/* Tracker */}
 
-    <div className="mt-6">
+    <div className="mt-4">
 
       <OrderTracker
         status={order.status}

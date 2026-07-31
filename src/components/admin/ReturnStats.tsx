@@ -30,11 +30,11 @@ export default function ReturnStats() {
     <div
       className="
       grid
-      grid-cols-1
-      sm:grid-cols-2
-      md:grid-cols-4
-      gap-6
-      mb-8
+      grid-cols-4
+      gap-2
+      sm:gap-4
+      max-w-xl
+      mb-6
       "
     >
 
@@ -45,8 +45,9 @@ export default function ReturnStats() {
       <div
         className="
         bg-white
-        rounded-3xl
-        p-6
+        rounded-2xl
+        p-2
+        sm:p-4
         border
         border-[#E5E5DD]
         shadow-sm
@@ -55,6 +56,9 @@ export default function ReturnStats() {
 
         <p
           className="
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#7A7E73]
           "
         >
@@ -64,9 +68,10 @@ export default function ReturnStats() {
 
         <h2
           className="
-          text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           text-[#13160F]
           "
         >
@@ -85,8 +90,9 @@ export default function ReturnStats() {
       <div
         className="
         bg-[#B88A2D]/10
-        rounded-3xl
-        p-6
+        rounded-2xl
+        p-2
+        sm:p-4
         border
         border-[#B88A2D]/20
         "
@@ -94,6 +100,9 @@ export default function ReturnStats() {
 
         <p
           className="
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#B88A2D]
           "
         >
@@ -103,9 +112,10 @@ export default function ReturnStats() {
 
         <h2
           className="
-          text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           text-[#13160F]
           "
         >
@@ -124,8 +134,9 @@ export default function ReturnStats() {
       <div
         className="
         bg-[#5C8A05]/10
-        rounded-3xl
-        p-6
+        rounded-2xl
+        p-2
+        sm:p-4
         border
         border-[#5C8A05]/20
         "
@@ -133,6 +144,9 @@ export default function ReturnStats() {
 
         <p
           className="
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#5C8A05]
           "
         >
@@ -142,9 +156,10 @@ export default function ReturnStats() {
 
         <h2
           className="
-          text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           text-[#13160F]
           "
         >
@@ -163,8 +178,9 @@ export default function ReturnStats() {
       <div
         className="
         bg-[#AAD10A]/15
-        rounded-3xl
-        p-6
+        rounded-2xl
+        p-2
+        sm:p-4
         border
         border-[#AAD10A]/30
         "
@@ -172,6 +188,9 @@ export default function ReturnStats() {
 
         <p
           className="
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#5C8A05]
           "
         >
@@ -181,9 +200,10 @@ export default function ReturnStats() {
 
         <h2
           className="
-          text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           text-[#13160F]
           "
         >

@@ -17,9 +17,10 @@ export default function Footer() {
     className="
     max-w-8xl
     mx-auto
-    px-6
+    px-4
     md:px-12
-    py-12
+    py-8
+    lg:py-12
     "
   >
 
@@ -28,9 +29,9 @@ export default function Footer() {
       className="
       grid
       grid-cols-1
-      sm:grid-cols-2
       lg:grid-cols-4
-      gap-10
+      gap-6
+      lg:gap-10
       "
     >
 
@@ -38,12 +39,13 @@ export default function Footer() {
 
       {/* Brand */}
 
-      <div>
+      <div className="mb-4 lg:mb-0">
 
 
         <h2
           className="
-          text-3xl
+          text-2xl
+          lg:text-3xl
           font-bold
           text-[#AAD10A]
           "
@@ -55,9 +57,13 @@ export default function Footer() {
 
         <p
           className="
-          mt-4
+          mt-3
+          lg:mt-4
           text-[#7A7E73]
-          leading-7
+          text-sm
+          lg:text-base
+          leading-6
+          lg:leading-7
           "
         >
           Discover the latest smartphones, accessories, and premium
@@ -71,6 +77,10 @@ export default function Footer() {
 
 
 
+      {/* Rest of the links in a row on mobile */}
+      <div className="grid grid-cols-[auto_1fr_auto] lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-10 lg:col-span-3">
+
+
       {/* Quick Links */}
 
       <div>
@@ -78,10 +88,12 @@ export default function Footer() {
 
         <h3
           className="
-          text-lg
+          text-base
+          lg:text-lg
           font-semibold
           text-[#13160F]
-          mb-4
+          mb-3
+          lg:mb-4
           "
         >
           Quick Links
@@ -109,6 +121,8 @@ export default function Footer() {
 
                 className="
                 text-[#7A7E73]
+                text-sm
+                lg:text-base
                 hover:text-[#AAD10A]
                 transition
                 "
@@ -142,10 +156,12 @@ export default function Footer() {
 
         <h3
           className="
-          text-lg
+          text-base
+          lg:text-lg
           font-semibold
           text-[#13160F]
-          mb-4
+          mb-3
+          lg:mb-4
           "
         >
           Support
@@ -163,6 +179,8 @@ export default function Footer() {
             items-center
             gap-3
             text-[#7A7E73]
+            text-sm
+            lg:text-base
             "
           >
 
@@ -186,6 +204,8 @@ export default function Footer() {
             items-center
             gap-3
             text-[#7A7E73]
+            text-sm
+            lg:text-base
             "
           >
 
@@ -209,6 +229,8 @@ export default function Footer() {
             items-start
             gap-3
             text-[#7A7E73]
+            text-sm
+            lg:text-base
             "
           >
 
@@ -246,10 +268,12 @@ export default function Footer() {
 
         <h3
           className="
-          text-lg
+          text-base
+          lg:text-lg
           font-semibold
           text-[#13160F]
-          mb-4
+          mb-3
+          lg:mb-4
           "
         >
           Follow Us
@@ -265,8 +289,10 @@ export default function Footer() {
           <a
             href="#"
             className="
-            w-11
-            h-11
+            w-9
+            h-9
+            lg:w-11
+            lg:h-11
             rounded-full
             bg-[#F2F2EC]
             hover:bg-[#AAD10A]
@@ -278,7 +304,7 @@ export default function Footer() {
             "
           >
 
-            <FaFacebookF size={18}/>
+            <FaFacebookF size={16} className="lg:w-[18px] lg:h-[18px]" />
 
           </a>
 
@@ -289,8 +315,10 @@ export default function Footer() {
           <a
             href="#"
             className="
-            w-11
-            h-11
+            w-9
+            h-9
+            lg:w-11
+            lg:h-11
             rounded-full
             bg-[#F2F2EC]
             hover:bg-[#AAD10A]
@@ -302,7 +330,7 @@ export default function Footer() {
             "
           >
 
-            <FaInstagram size={18}/>
+            <FaInstagram size={16} className="lg:w-[18px] lg:h-[18px]" />
 
           </a>
 
@@ -313,8 +341,10 @@ export default function Footer() {
           <a
             href="#"
             className="
-            w-11
-            h-11
+            w-9
+            h-9
+            lg:w-11
+            lg:h-11
             rounded-full
             bg-[#F2F2EC]
             hover:bg-[#AAD10A]
@@ -326,7 +356,7 @@ export default function Footer() {
             "
           >
 
-            <FaXTwitter size={18}/>
+            <FaXTwitter size={16} className="lg:w-[18px] lg:h-[18px]" />
 
           </a>
 
@@ -340,7 +370,8 @@ export default function Footer() {
 
 
 
-    </div>
+      </div>
+      </div>
 
 
 
@@ -370,7 +401,8 @@ export default function Footer() {
       <p
         className="
         text-[#7A7E73]
-        text-sm
+        text-xs
+        lg:text-sm
         text-center
         md:text-left
         "
@@ -387,8 +419,10 @@ export default function Footer() {
         flex
         flex-wrap
         justify-center
-        gap-6
-        text-sm
+        gap-4
+        lg:gap-6
+        text-xs
+        lg:text-sm
         "
       >
 

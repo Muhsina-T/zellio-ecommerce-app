@@ -28,17 +28,15 @@ export default function OrderStats() {
   return (
 
     <div
-  className="
-  grid
-  grid-cols-2
-  sm:grid-cols-2
-  lg:grid-cols-4
-  gap-3
-  sm:gap-6
-  mb-6
-  sm:mb-8
-  "
->
+      className="
+      grid
+      grid-cols-4
+      gap-2
+      sm:gap-4
+      max-w-xl
+      mb-6
+      "
+    >
 
 
       {/* Total Orders */}
@@ -47,8 +45,8 @@ export default function OrderStats() {
         className="
         bg-white
         rounded-2xl
-        p-3
-        sm:p-6
+        p-2
+        sm:p-4
         border
         border-[#E5E5DD]
         shadow-sm
@@ -57,8 +55,9 @@ export default function OrderStats() {
 
         <p
           className="
-          text-sm
-          sm:text-base
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#7A7E73]
           "
         >
@@ -68,10 +67,10 @@ export default function OrderStats() {
 
         <h2
           className="
-          text-3xl
-          sm:text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           text-[#13160F]
           "
         >
@@ -90,8 +89,8 @@ export default function OrderStats() {
         className="
         bg-[#B88A2D]/10
         rounded-2xl
-        p-4
-        sm:p-6
+        p-2
+        sm:p-4
         border
         border-[#B88A2D]/20
         "
@@ -99,8 +98,9 @@ export default function OrderStats() {
 
         <p
           className="
-          text-sm
-          sm:text-base
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#B88A2D]
           "
         >
@@ -110,10 +110,10 @@ export default function OrderStats() {
 
         <h2
           className="
-          text-3xl
-          sm:text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           "
         >
           {processing}
@@ -131,8 +131,8 @@ export default function OrderStats() {
         className="
         bg-blue-50
         rounded-2xl
-        p-4
-        sm:p-6
+        p-2
+        sm:p-4
         border
         border-blue-100
         "
@@ -140,8 +140,9 @@ export default function OrderStats() {
 
         <p
           className="
-          text-sm
-          sm:text-base
+          text-xs
+          sm:text-sm
+          font-medium
           text-blue-600
           "
         >
@@ -151,10 +152,10 @@ export default function OrderStats() {
 
         <h2
           className="
-          text-3xl
-          sm:text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           "
         >
           {shipped}
@@ -173,8 +174,8 @@ export default function OrderStats() {
         className="
         bg-[#5C8A05]/10
         rounded-2xl
-        p-4
-        sm:p-6
+        p-2
+        sm:p-4
         border
         border-[#5C8A05]/20
         "
@@ -182,8 +183,9 @@ export default function OrderStats() {
 
         <p
           className="
-          text-sm
-          sm:text-base
+          text-xs
+          sm:text-sm
+          font-medium
           text-[#5C8A05]
           "
         >
@@ -193,10 +195,10 @@ export default function OrderStats() {
 
         <h2
           className="
-          text-3xl
-          sm:text-4xl
+          text-xl
+          sm:text-2xl
           font-bold
-          mt-2
+          mt-1
           "
         >
           {delivered}

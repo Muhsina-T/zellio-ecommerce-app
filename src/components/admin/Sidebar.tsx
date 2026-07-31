@@ -187,14 +187,18 @@ export default function Sidebar() {
                   flex
                   flex-col
                   items-center
+                  justify-center
                   gap-1
                   text-xs
+                  px-4
+                  py-2
+                  rounded-2xl
                   transition
 
                   ${
                     isActive
                     ?
-                    "text-[#5C8A05]"
+                    "bg-[#AAD10A]/20 text-[#5C8A05] font-bold"
                     :
                     "text-[#7A7E73]"
                   }
