@@ -1,7 +1,6 @@
 import {
   ShoppingCart,
   Package,
-  Users,
   IndianRupee,
 } from "lucide-react";
 
