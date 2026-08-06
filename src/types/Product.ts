@@ -7,14 +7,17 @@ export type Variant = {
 };
 
 export type Review = {
-  id: number;
+  _id?: string;
+  id?: string | number;
   user: string;
   comment: string;
   rating: number;
 };
 
 export interface Product {
-  id: number;
+  _id?: string;
+  id?: string;
+
   name: string;
   brand: string;
 
@@ -30,8 +33,7 @@ export interface Product {
   description: string;
   stock: number;
 
-  reviews: Review[];
+  reviews?: Review[];
 
-  
-  variants: Variant[];
+  variants?: Variant[];
 }

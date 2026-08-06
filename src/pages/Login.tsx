@@ -24,9 +24,9 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  function onSubmit(data: LoginFormData) {
+  async function onSubmit(data: LoginFormData) {
     try {
-      const user = loginUser(data.email, data.password);
+      const user = await loginUser(data.email, data.password);
 
       setUser(user);
 

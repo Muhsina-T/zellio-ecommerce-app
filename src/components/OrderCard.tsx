@@ -10,9 +10,26 @@ type Props = {
   order: Order;
 };
 
+function formatOrderDate(value: string | undefined) {
+  if (!value) {
+    return "Date not available";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+
+  return date.toLocaleDateString();
+}
+
+function getOrderPlacementDate(order: Order) {
+  return formatOrderDate(order.date || order.createdAt);
+}
+
 export default function OrderCard({ order }: Props) {
   const [showReturn, setShowReturn] = useState(false);
-  const [showReturnProductId, setShowReturnProductId] = useState<number | null>(
+  const [showReturnProductId, setShowReturnProductId] = useState<string | null>(
     null,
   );
   const { returns } = useReturn();
@@ -69,7 +86,7 @@ export default function OrderCard({ order }: Props) {
           text-[#7A7E73]
           "
         >
-          {new Date(order.date).toLocaleDateString()}
+          {getOrderPlacementDate(order)}
         </p>
 
       </div>
@@ -111,9 +128,9 @@ export default function OrderCard({ order }: Props) {
 
 
         const itemRequested = returns.some(
-          (r)=>
-          r.orderId === order.id &&
-          r.productId === item.product.id
+          (r) =>
+            r.order?._id === order._id &&
+            r.product?._id === item.product._id
         );
 
 
@@ -122,7 +139,7 @@ export default function OrderCard({ order }: Props) {
 
           <div
 
-            key={item.product.id}
+            key={item.product._id}
 
             className="
             flex
@@ -195,23 +212,27 @@ export default function OrderCard({ order }: Props) {
 
 
 
-
+                
 
               {
 
+                
+
                 (()=>{
 
-
+                  console.log("eeeeeeeeeeeee", order.deliveredDate);
                   const sevenDays =
                   7 * 24 * 60 * 60 * 1000;
 
 
+                  const deliveryDate = order.deliveredDate || order.date;
+                  const isDelivered = String(order.status || "").trim().toLowerCase() === "delivered";
                   const canRequestItem =
-                  order.status === "Delivered" &&
+                  isDelivered &&
                   order.canReturn &&
-                  order.deliveredDate &&
+                  deliveryDate &&
                   new Date().getTime() -
-                  new Date(order.deliveredDate).getTime()
+                  new Date(deliveryDate).getTime()
                   <= sevenDays;
 
 
@@ -223,7 +244,7 @@ export default function OrderCard({ order }: Props) {
 
 
                   if(itemRequested){
-
+                    
                     return (
 
                       <span
@@ -249,7 +270,7 @@ export default function OrderCard({ order }: Props) {
 
                       onClick={() =>
                         setShowReturnProductId(
-                          item.product.id
+                          item.product._id || item.product.name || null
                         )
                       }
 
@@ -349,12 +370,14 @@ export default function OrderCard({ order }: Props) {
 
 
 
+        const deliveryDate = order.deliveredDate || order.date;
+        const isDelivered = String(order.status || "").trim().toLowerCase() === "delivered";
         const canRequest =
-        order.status === "Delivered" &&
+        isDelivered &&
         order.canReturn &&
-        order.deliveredDate &&
+        deliveryDate &&
         new Date().getTime() -
-        new Date(order.deliveredDate).getTime()
+        new Date(deliveryDate).getTime()
         <= sevenDays;
 
 
@@ -399,7 +422,7 @@ export default function OrderCard({ order }: Props) {
 
 
                     <ReturnRequest
-                      orderId={order.id}
+                      orderId={order._id || order.orderNumber}
                     />
 
 
@@ -423,8 +446,8 @@ export default function OrderCard({ order }: Props) {
                   const item =
                   order.items.find(
                     i =>
-                    i.product.id ===
-                    showReturnProductId
+                    (i.product._id || i.product.name || "") ===
+                    (showReturnProductId || "")
                   );
 
 
@@ -466,7 +489,7 @@ export default function OrderCard({ order }: Props) {
 
                       <ReturnRequest
 
-                        orderId={order.id}
+                        orderId={order._id || order.orderNumber}
 
                         productId={
                           showReturnProductId

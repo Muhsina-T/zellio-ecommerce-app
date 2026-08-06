@@ -7,7 +7,7 @@ import useProducts from "../hooks/useProducts";
 
 export default function Payment() {
 
-  const { cart, total } = useCart();
+  const { cart, total, clearCart } = useCart();
 
   const { createOrder } = useOrder();
 
@@ -18,43 +18,28 @@ export default function Payment() {
   const [method, setMethod] = useState("COD");
 
 
-  function confirm() {
-
-    createOrder({
-
+  async function confirm() {
+    await createOrder({
       id: generateId(),
-
-      orderNumber:
-        "ZEL" + Math.floor(100000 + Math.random() * 900000),
-
+      orderNumber: "ZEL" + Math.floor(100000 + Math.random() * 900000),
       items: cart,
-
       total,
-
       address: {
-        id: "1",
-        type: "Home",
         name: "Customer",
         phone: "",
         address: "",
       },
-
       payment: method,
-
       status: "Processing",
-
       date: new Date().toISOString(),
-
       canReturn: true,
-
     });
-
 
     cart.forEach((item) => {
-      decreaseStock(item.product.id, item.quantity);
+      decreaseStock(item.product._id || "", item.quantity);
     });
 
-
+    await clearCart();
     navigate("/orders");
   }
 

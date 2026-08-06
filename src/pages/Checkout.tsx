@@ -9,7 +9,7 @@ import useProducts from "../hooks/useProducts";
 import { generateId } from "../utils/generateId";
 
 export default function Checkout() {
-  const { cart, total } = useCart();
+  const { cart, total, clearCart } = useCart();
   const { createOrder } = useOrder();
   const { decreaseStock } = useProducts();
 
@@ -51,15 +51,13 @@ export default function Checkout() {
     setShowPayment(true);
   };
 
-  function confirmOrder() {
-    createOrder({
+  async function confirmOrder() {
+    await createOrder({
       id: generateId(),
       orderNumber: "ZEL" + Math.floor(100000 + Math.random() * 900000),
       items: cart,
       total: finalPrice,
       address: {
-        id: "1",
-        type: "Home",
         name: address.name,
         phone: address.phone,
         address: `${address.address}, ${address.additionalAddress}`,
@@ -71,9 +69,10 @@ export default function Checkout() {
     });
 
     cart.forEach((item) => {
-      decreaseStock(item.product.id, item.quantity);
+      decreaseStock(item.product._id || "", item.quantity);
     });
 
+    await clearCart();
     navigate("/orders");
   }
 
@@ -158,7 +157,7 @@ export default function Checkout() {
           {cart.map((item) => (
 
             <div
-              key={item.product.id}
+              key={item.product._id}
               className="
                 flex
                 flex-col

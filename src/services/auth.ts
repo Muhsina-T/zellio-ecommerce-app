@@ -1,99 +1,77 @@
+import api from "../api/api";
 import type { User } from "../types/User";
-import { USERS_KEY, CURRENT_USER_KEY } from "./storage";
 
-const defaultAdmin: User = {
-  id: crypto.randomUUID(),
-  name: "Admin",
-  email: "admin@zellio.com",
-  password: "admin123",
-  role: "admin",
-};
+const AUTH_TOKEN_KEY = "zellio_token";
 
 export function initializeUsers() {
-  const users = localStorage.getItem(USERS_KEY);
-
-  if (!users) {
-    localStorage.setItem(
-      USERS_KEY,
-      JSON.stringify([defaultAdmin])
-    );
-  }
+  return Promise.resolve();
 }
 
-export function getUsers(): User[] {
-  const users = localStorage.getItem(USERS_KEY);
-
-  return users ? JSON.parse(users) : [];
+function persistAuth(token: string) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
 }
 
-export function saveUsers(users: User[]) {
-  localStorage.setItem(
-    USERS_KEY,
-    JSON.stringify(users)
-  );
-}
-
-export function registerUser(
+export async function registerUser(
   name: string,
   email: string,
   password: string
 ) {
-  const users = getUsers();
+  try {
+    const res = await api.post("/users/register", {
+      name,
+      email,
+      password,
+    });
 
-  const exists = users.find(
-    (user) => user.email.toLowerCase() === email.toLowerCase()
-  );
+    const { user, token } = res.data;
 
-  if (exists) {
-    throw new Error("Email already exists");
+    persistAuth(token);
+
+    return user as User;
+  } catch (error: unknown) {
+    const message =
+      error && typeof error === "object" && "response" in error
+        ? (error as { response?: { data?: { message?: string } } }).response
+            ?.data?.message
+        : "Registration failed";
+
+    throw new Error(message || "Registration failed");
   }
-
-  const newUser: User = {
-    id: crypto.randomUUID(),
-    name,
-    email,
-    password,
-    role: "user",
-  };
-
-  users.push(newUser);
-
-  saveUsers(users);
-
-  return newUser;
 }
 
-export function loginUser(email: string, password: string) {
-  const users = getUsers();
+export async function loginUser(email: string, password: string) {
+  try {
+    const res = await api.post("/users/login", { email, password });
 
-  const user = users.find(
-    (user) =>
-      user.email.toLowerCase() === email.toLowerCase() &&
-      user.password === password
-  );
+    const { user, token } = res.data;
 
-  if (!user) {
-    throw new Error("Invalid email or password");
+    persistAuth(token);
+
+    return user as User;
+  } catch (error: unknown) {
+    const message =
+      error && typeof error === "object" && "response" in error
+        ? (error as { response?: { data?: { message?: string } } }).response
+            ?.data?.message
+        : "Invalid email or password";
+
+    throw new Error(message || "Invalid email or password");
   }
-
-  setCurrentUser(user);
-
-  return user;
 }
 
-export function setCurrentUser(user: User) {
-  localStorage.setItem(
-    CURRENT_USER_KEY,
-    JSON.stringify(user)
-  );
+export async function getCurrentUser(): Promise<User | null> {
+  try {
+    const res = await api.get("/users/profile");
+    return res.data;
+  } catch {
+    return null;
+  }
 }
 
-export function getCurrentUser(): User | null {
-  const user = localStorage.getItem(CURRENT_USER_KEY);
-
-  return user ? JSON.parse(user) : null;
+export function getAuthToken() {
+  return localStorage.getItem(AUTH_TOKEN_KEY);
 }
 
 export function logout() {
-  localStorage.removeItem(CURRENT_USER_KEY);
+  localStorage.removeItem(AUTH_TOKEN_KEY);
 }

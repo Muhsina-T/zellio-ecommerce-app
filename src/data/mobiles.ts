@@ -3,7 +3,7 @@ import type { Product } from "../types/Product";
 
 export const mobiles: Product[] = [
 {
-  id: 1,
+  _id: "1",
   name: "iPhone 16 Pro",
   brand: "Apple",
 

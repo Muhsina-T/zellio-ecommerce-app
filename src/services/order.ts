@@ -1,42 +1,46 @@
+import api from "../api/api";
 import type { Order } from "../types/Order";
 
 
-const ORDER_KEY="zellio_orders";
-
-
-export function saveOrder(order:Order){
-
-const orders =
-getOrders();
-
-
-orders.push(order);
-
-
-localStorage.setItem(
-ORDER_KEY,
-JSON.stringify(orders)
-);
-
-
+// Get logged-in user's orders
+export async function getOrders(): Promise<Order[]> {
+  try {
+    const res = await api.get("/orders");
+    console.log("Orders fetched:", res.data);
+    return res.data;
+  } catch (error) {
+    throw new Error("Failed to fetch orders");
+  }
 }
 
 
+// Create order
+export async function saveOrder(order: Order): Promise<Order> {
+  try {
+    const res = await api.post("/orders", order);
 
-export function getOrders():Order[]{
-
-
-const data =
-localStorage.getItem(
-ORDER_KEY
-);
-
-
-return data
-?
-JSON.parse(data)
-:
-[];
+    return res.data;
+  } catch (error) {
+    throw new Error("Failed to place order");
+  }
+}
 
 
+// Update order status
+export async function updateOrderStatus(
+  id: string,
+  status: Order["status"]
+): Promise<Order> {
+
+  const res = await api.put(`/orders/${id}`, {
+    status,
+  });
+
+  return res.data;
+}
+
+
+// Delete order
+export async function deleteOrder(id: string): Promise<void> {
+  await api.delete(`/orders/${id}`);
 }

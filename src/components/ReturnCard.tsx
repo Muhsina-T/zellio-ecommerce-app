@@ -4,9 +4,7 @@ type Props = {
   request: ReturnRequest;
 };
 
-export default function ReturnCard({
-  request,
-}: Props) {
+export default function ReturnCard({ request }: Props) {
   const statusStyle = {
     Pending:
       "bg-[#FFF7E6] text-[#B88A2D] border border-[#F1DFC2]",
@@ -16,9 +14,6 @@ export default function ReturnCard({
 
     Rejected:
       "bg-red-50 text-red-600 border border-red-200",
-
-    Completed:
-      "bg-[#F2F2EC] text-[#3F443A] border border-[#D7D7CD]",
   };
 
   return (
@@ -40,11 +35,11 @@ export default function ReturnCard({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-[#13160F]">
-            Order #{request.orderId}
+            Order #{request.order?._id?.slice(-6)}
           </h2>
 
           <p className="mt-1 text-sm text-[#7A7E73]">
-            {new Date(request.requestDate).toLocaleDateString()}
+            {new Date(request.createdAt).toLocaleDateString()}
           </p>
         </div>
 
@@ -64,6 +59,14 @@ export default function ReturnCard({
 
       <div className="mt-6 border-t border-[#E5E5DD] pt-5">
         <p className="text-sm font-medium uppercase tracking-wide text-[#7A7E73]">
+          Product
+        </p>
+
+        <p className="mt-2 text-[#13160F] font-medium">
+          {request.product?.name}
+        </p>
+
+        <p className="mt-5 text-sm font-medium uppercase tracking-wide text-[#7A7E73]">
           Return Reason
         </p>
 

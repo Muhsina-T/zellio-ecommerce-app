@@ -16,7 +16,7 @@ import {
 type AuthContextType = {
   user: User | null;
   logout: () => void;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 };
 
 
@@ -43,11 +43,12 @@ export default function AuthProvider({
   // Load user after refresh
 
   useEffect(() => {
+    async function loadUser() {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    }
 
-    const currentUser = getCurrentUser();
-
-    setUser(currentUser);
-
+    void loadUser();
   }, []);
 
 

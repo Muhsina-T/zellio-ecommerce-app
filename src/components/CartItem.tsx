@@ -91,7 +91,7 @@ export default function CartItem({ item }: Props) {
       "
     >
       <button
-        onClick={() => decrease(item.product.id)}
+        onClick={() => decrease(item.product._id || "")}
         className="
           w-8
           h-8
@@ -123,7 +123,7 @@ export default function CartItem({ item }: Props) {
       </span>
 
       <button
-        onClick={() => increase(item.product.id)}
+        onClick={() => increase(item.product._id || "")}
         className="
           w-8
           h-8
@@ -143,7 +143,7 @@ export default function CartItem({ item }: Props) {
     </div>
 
     <button
-      onClick={() => removeFromCart(item.product.id)}
+      onClick={() => removeFromCart(item.product._id || "")}
       className="
         w-full
         lg:w-auto

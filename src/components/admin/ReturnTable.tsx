@@ -83,7 +83,7 @@ export default function ReturnTable() {
           <tbody>
             {returns.map((request) => (
               <ReturnRow
-                key={request.id}
+                key={request._id}
                 request={request}
                 updateReturnStatus={updateReturnStatus}
               />
@@ -95,7 +95,7 @@ export default function ReturnTable() {
       <div className="lg:hidden space-y-4">
         {returns.map((request) => (
           <div
-            key={request.id}
+            key={request._id}
             className="rounded-3xl border border-[#E5E5DD] bg-[#F8FAF3] p-4"
           >
             <div className="flex items-center justify-between gap-3">
@@ -104,7 +104,7 @@ export default function ReturnTable() {
                   Order ID
                 </p>
                 <p className="mt-2 text-base font-semibold text-[#13160F]">
-                  {request.orderId}
+                  {request.order?.orderNumber || request.order?._id || "-"}
                 </p>
               </div>
               <div className="text-right">
@@ -112,7 +112,7 @@ export default function ReturnTable() {
                   Products
                 </p>
                 <p className="mt-2 text-base font-semibold text-[#5C8A05]">
-                  {request.order.items.length}
+                  {request.order?.items?.length ?? 0}
                 </p>
               </div>
             </div>
@@ -120,7 +120,7 @@ export default function ReturnTable() {
             <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-[#3F443A]">
               <div>
                 <p className="text-[#7A7E73]">Customer</p>
-                <p className="mt-1">{request.order.address.name}</p>
+                <p className="mt-1">{request.order?.address?.name || "-"}</p>
               </div>
               <div>
                 <p className="text-[#7A7E73]">Reason</p>
@@ -136,7 +136,7 @@ export default function ReturnTable() {
                 value={request.status}
                 onChange={(e) =>
                   updateReturnStatus(
-                    request.id,
+                    request._id,
                     e.target.value as any
                   )
                 }
@@ -145,7 +145,6 @@ export default function ReturnTable() {
                 <option>Pending</option>
                 <option>Approved</option>
                 <option>Rejected</option>
-                <option>Completed</option>
               </select>
             </div>
           </div>

@@ -1,27 +1,15 @@
 import type { CartItem } from "./Cart";
 
-
 export interface Address {
-
-  id: string;
-
-  type: "Home" | "Work";
-
   name: string;
-
   phone: string;
-
   address: string;
-
 }
 
-
 export interface Order {
+  _id?: string;
+  id?: string;
 
-  // Internal ID (used for logic/localStorage)
-  id: string;
-
-  // Customer visible order number
   orderNumber: string;
 
   items: CartItem[];
@@ -42,6 +30,8 @@ export interface Order {
 
   canReturn: boolean;
 
-  deliveredDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 
+  deliveredDate?: string;
 }

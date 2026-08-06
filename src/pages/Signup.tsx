@@ -25,9 +25,9 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
   });
 
-  function onSubmit(data: SignupFormData) {
+  async function onSubmit(data: SignupFormData) {
     try {
-      registerUser(
+      await registerUser(
         data.name,
         data.email,
         data.password

@@ -5,27 +5,25 @@ import useReturn from "../hooks/useReturn";
 import useOrder from "../hooks/useOrder.ts";
 import type { Order } from "../types/Order";
 
-import { generateId } from "../utils/generateId";
 
 type Props = {
   orderId: string;
-  productId?: number;
+  productId?: string | number;
   quantity?: number;
 };
 
 export default function ReturnRequest({
   orderId,
   productId,
-  quantity = 1,
 }: Props) {
-  const { orders, updateOrder } = useOrder();
+  const { orders } = useOrder();
 
   const { requestReturn, returns } = useReturn();
 
   const [reason, setReason] = useState("");
 
-  function submitReturn() {
-    const order = orders.find((o: Order) => o.id === orderId);
+  async function submitReturn() {
+    const order = orders.find((o: Order) => (o._id || o.orderNumber) === orderId);
 
     if (!order) return;
 
@@ -51,7 +49,9 @@ export default function ReturnRequest({
     // prevent duplicate return requests for same item
     if (productId) {
       const exists = returns.some(
-        (r) => r.orderId === orderId && r.productId === productId
+        (r) =>
+          r.order?._id === order._id &&
+          r.product?._id === productId
       );
 
       if (exists) {
@@ -60,30 +60,32 @@ export default function ReturnRequest({
       }
     }
 
-    const req: any = {
-      id: generateId(),
-      orderId,
-      order,
+    if (!productId) {
+      alert("Please select a product to request a return.");
+      return;
+    }
+
+    const orderObjectId = order._id || order.id;
+
+    if (!orderObjectId) {
+      alert("Unable to resolve order id for return request.");
+      return;
+    }
+
+    const req = {
+      order: orderObjectId,
+      product: String(productId),
       reason,
-      requestDate: new Date().toISOString(),
-      status: "Pending",
+      status: "Pending" as const,
     };
 
-    if (productId) {
-      req.productId = productId;
-      req.quantity = quantity;
+    try {
+      await requestReturn(req);
+      setReason("");
+      alert("Return request submitted successfully.");
+    } catch (error) {
+      alert("Failed to submit return request. Please try again.");
     }
-
-    requestReturn(req);
-
-    // if whole-order return (no specific product), mark order canReturn false
-    if (!productId) {
-      updateOrder(orderId, { canReturn: false });
-    }
-
-    setReason("");
-
-    alert("Return request submitted successfully.");
   }
 
   return (

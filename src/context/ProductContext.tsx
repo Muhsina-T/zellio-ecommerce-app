@@ -4,19 +4,21 @@ import type { Product } from "../types/Product";
 
 import { mobiles } from "../data/mobiles";
 
+import api from "../api/api";
+
 type ProductContextType = {
   products: Product[];
 
-  addProduct: (product: Product) => void;
+  addProduct: (product: Product) => Promise<void>;
 
-  updateProduct: (product: Product) => void;
+updateProduct: (product: Product) => Promise<void>;
 
-  deleteProduct: (id: number) => void;
+  deleteProduct: (id: string) => Promise<void>;
 
   
 
   decreaseStock: (
-    productId: number,
+    productId: string,
     quantity: number
   ) => void;
 };
@@ -32,34 +34,63 @@ type Props = {
 };
 
 export default function ProductProvider({ children }: Props) {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem("zellio_products");
-
-    return saved ? JSON.parse(saved) : mobiles;
-  });
+ const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("zellio_products", JSON.stringify(products));
-  }, [products]);
+  fetchProducts();
+}, []);
 
-  function addProduct(product: Product) {
-  setProducts((prev) => [...prev, product]);
+async function fetchProducts() {
+  try {
+    const res = await api.get("/products");
+    setProducts(res.data);
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+
+    // Optional fallback while backend is unavailable
+    setProducts(mobiles);
+  }
 }
 
-function updateProduct(product: Product) {
-  setProducts((prev) =>
-    prev.map((item) => (item.id === product.id ? product : item))
-  );
+  async function addProduct(product: Product) {
+  try {
+    const res = await api.post("/products", product);
+    setProducts((prev) => [...prev, res.data]);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function deleteProduct(id: number) {
-  setProducts((prev) => prev.filter((item) => item.id !== id));
+async function updateProduct(product: Product) {
+  try {
+    const res = await api.put(`/products/${product._id}`, product);
+
+    setProducts((prev) =>
+      prev.map((item) =>
+        item._id === res.data._id ? res.data : item
+      )
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function decreaseStock(productId: number, quantity: number) {
+async function deleteProduct(id: string) {
+  try {
+    await api.delete(`/products/${id}`);
+
+    setProducts((prev) =>
+      prev.filter((item) => item._id !== id)
+    );
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function decreaseStock(productId: string, quantity: number) {
   setProducts((prev) =>
     prev.map((product) =>
-      product.id === productId
+      product._id === productId
         ? {
             ...product,
             stock: Math.max(0, product.stock - quantity),

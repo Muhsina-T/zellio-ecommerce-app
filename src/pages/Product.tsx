@@ -11,9 +11,9 @@ export default function Product() {
 
   const { products } = useProducts();
 
-  const product = products.find(
-    (item) => item.id === Number(id)
-  );
+ const product = products.find(
+  (item) => item._id === id
+);
 
 
   if (!product) {

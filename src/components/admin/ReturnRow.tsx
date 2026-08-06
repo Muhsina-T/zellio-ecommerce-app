@@ -2,6 +2,7 @@ import type { ReturnRequest } from "../../types/Return";
 import ReturnStatusBadge from "./ReturnStatusBadge";
 
 
+
 type Props = {
 
   request: ReturnRequest;
@@ -13,6 +14,7 @@ type Props = {
 
 };
 
+console.log("ReturnRow.tsx loaded");
 
 
 export default function ReturnRow({
@@ -20,6 +22,7 @@ export default function ReturnRow({
   updateReturnStatus,
 }: Props) {
 
+  console.log("ReturnRow.tsx rendered with request:", request);
 
   return (
 
@@ -41,7 +44,7 @@ export default function ReturnRow({
         text-[#13160F]
         "
       >
-        {request.orderId}
+        {request.order?.orderNumber || request.order?._id || "-"}
       </td>
 
 
@@ -52,7 +55,7 @@ export default function ReturnRow({
         text-[#3F443A]
         "
       >
-        {request.order.address.name}
+        {request.order?.address?.name || "-"}
       </td>
 
 
@@ -63,7 +66,7 @@ export default function ReturnRow({
         text-[#3F443A]
         "
       >
-        {request.order.items.length}
+        {request.order?.items?.length ?? 0}
       </td>
 
 
@@ -100,7 +103,7 @@ export default function ReturnRow({
 
           onChange={(e) =>
             updateReturnStatus(
-              request.id,
+              request._id,
               e.target.value as ReturnRequest["status"]
             )
           }
@@ -135,11 +138,6 @@ export default function ReturnRow({
 
           <option>
             Rejected
-          </option>
-
-
-          <option>
-            Completed
           </option>
 
 

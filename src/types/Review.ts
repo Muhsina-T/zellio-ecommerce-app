@@ -1,5 +1,5 @@
 export interface Review {
-  id: number;
+  id: string;
   user: string;
   comment: string;
   rating: number;

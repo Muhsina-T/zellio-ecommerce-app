@@ -1,7 +1,7 @@
 import ProductGallery from "./ProductGallery";
 import ReviewCard from "./ReviewCard";
 
-import type { Product } from "../types/Product";
+import type { Product, Variant } from "../types/Product";
 
 import useCart from "../hooks/useCart";
 
@@ -11,53 +11,46 @@ import { useState } from "react";
 
 import toast from "react-hot-toast";
 
-
 type Props = {
   product: Product;
 };
 
 export default function ProductDetails({ product }: Props) {
-
   const [added, setAdded] = useState(false);
 
-  const [selectedVariant, setSelectedVariant] = useState(
-  product.variants[0]
-);
+  const initialVariant: Variant = product.variants?.[0] ?? {
+    id: Number(product.id ?? 0),
+    storage: product.storage,
+    color: product.color,
+    price: product.price,
+    image: product.image,
+  };
+
+  const [selectedVariant, setSelectedVariant] = useState<Variant>(initialVariant);
 
   const navigate = useNavigate();
 
   const { addToCart } = useCart();
+  const reviews = product.reviews ?? [];
   return (
     <div
-  className="
+      className="
   grid
   md:grid-cols-2
   gap-12
   "
->
+    >
+      <ProductGallery
+        variants={product.variants || []}
+        selectedVariant={selectedVariant}
+        onSelectVariant={setSelectedVariant}
+      />
 
+      <div>
+        {/* Brand */}
 
-  <ProductGallery
-
-    variants={product.variants}
-
-    selectedVariant={selectedVariant}
-
-    onSelectVariant={setSelectedVariant}
-
-  />
-
-
-
-
-  <div>
-
-
-
-    {/* Brand */}
-
-    <span
-      className="
+        <span
+          className="
       bg-[#AAD10A]/15
       text-[#5C8A05]
       px-3
@@ -69,19 +62,14 @@ export default function ProductDetails({ product }: Props) {
       lg:text-sm
       font-semibold
       "
-    >
-      {product.brand}
-    </span>
+        >
+          {product.brand}
+        </span>
 
+        {/* Product Name */}
 
-
-
-
-
-    {/* Product Name */}
-
-    <h1
-      className="
+        <h1
+          className="
       text-3xl
       lg:text-5xl
       font-bold
@@ -91,19 +79,14 @@ export default function ProductDetails({ product }: Props) {
       lg:py-3
       text-[#13160F]
       "
-    >
-      {product.name}
-    </h1>
+        >
+          {product.name}
+        </h1>
 
+        {/* Description */}
 
-
-
-
-
-    {/* Description */}
-
-    <p
-      className="
+        <p
+          className="
       text-[#7A7E73]
       text-sm
       lg:text-base
@@ -114,20 +97,14 @@ export default function ProductDetails({ product }: Props) {
       py-1
       lg:py-3
       "
-    >
-      {product.description}
-    </p>
+        >
+          {product.description}
+        </p>
 
+        {/* Price */}
 
-
-
-
-
-
-    {/* Price */}
-
-    <h2
-      className="
+        <h2
+          className="
       text-2xl
       lg:text-4xl
       font-bold
@@ -137,22 +114,14 @@ export default function ProductDetails({ product }: Props) {
       py-1
       lg:py-2
       "
-    >
+        >
+          ₹{Number(selectedVariant?.price || product.price).toLocaleString()}
+        </h2>
 
-      ₹{Number(selectedVariant.price).toLocaleString()}
+        {/* Variant Details */}
 
-    </h2>
-
-
-
-
-
-
-
-    {/* Variant Details */}
-
-    <div
-      className="
+        <div
+          className="
       mt-4
       lg:mt-5
       space-y-1
@@ -161,95 +130,51 @@ export default function ProductDetails({ product }: Props) {
       lg:text-base
       text-[#3F443A]
       "
-    >
+        >
+          <p>
+            <strong>Storage:</strong>{" "}
+            {selectedVariant?.storage || product.storage}
+          </p>
 
-      <p>
-        <strong>
-          Storage:
-        </strong>
+          <p>
+            <strong>Colour:</strong> {selectedVariant?.color || product.color}
+          </p>
+        </div>
 
-        {" "}
+        {/* Buttons */}
 
-        {selectedVariant.storage}
-
-      </p>
-
-
-
-      <p>
-
-        <strong>
-          Colour:
-        </strong>
-
-        {" "}
-
-        {selectedVariant.color}
-
-      </p>
-
-
-    </div>
-
-
-
-
-
-
-
-
-    {/* Buttons */}
-
-    <div
-      className="
+        <div
+          className="
       flex
       gap-3
       lg:gap-5
       mt-6
       lg:mt-8
       "
-    >
+        >
+          <button
+            onClick={() => {
+              addToCart({
+                ...product,
 
+                image: selectedVariant.image,
 
+                price: Number(selectedVariant.price),
 
-      <button
+                storage: selectedVariant.storage,
 
-        onClick={() => {
+                color: selectedVariant.color,
+              });
 
-          addToCart({
+              toast.success(`${product.name} added to cart!`);
 
-            ...product,
+              setAdded(true);
 
-            image:selectedVariant.image,
-
-            price:Number(selectedVariant.price),
-
-            storage:selectedVariant.storage,
-
-            color:selectedVariant.color,
-
-          });
-
-
-          toast.success(
-            `${product.name} added to cart!`
-          );
-
-
-          setAdded(true);
-
-
-          setTimeout(()=>{
-
-            setAdded(false);
-
-          },1500);
-
-
-        }}
-
-
-        className="
+              setTimeout(() => {
+                setAdded(false);
+              }, 1500);
+            }}
+            className="
         bg-[#AAD10A]
         text-[#0A0D0A]
         px-4
@@ -265,54 +190,27 @@ export default function ProductDetails({ product }: Props) {
         transition
         flex-1
         "
-      >
+          >
+            {added ? "✓ Added to Cart" : "Add To Cart"}
+          </button>
 
-        {
-          added
-          ?
-          "✓ Added to Cart"
-          :
-          "Add To Cart"
-        }
+          <button
+            onClick={() => {
+              addToCart({
+                ...product,
 
+                image: selectedVariant.image,
 
-      </button>
+                price: Number(selectedVariant.price),
 
+                storage: selectedVariant.storage,
 
+                color: selectedVariant.color,
+              });
 
-
-
-
-
-      <button
-
-
-        onClick={() => {
-
-
-          addToCart({
-
-            ...product,
-
-            image:selectedVariant.image,
-
-            price:Number(selectedVariant.price),
-
-            storage:selectedVariant.storage,
-
-            color:selectedVariant.color,
-
-          });
-
-
-          navigate("/checkout");
-
-
-        }}
-
-
-
-        className="
+              navigate("/checkout");
+            }}
+            className="
         bg-[#13160F]
         text-white
         px-4
@@ -328,56 +226,28 @@ export default function ProductDetails({ product }: Props) {
         transition
         flex-1
         "
+          >
+            Buy Now
+          </button>
+        </div>
 
-      >
+        {/* Reviews */}
 
-        Buy Now
-
-
-      </button>
-
-
-
-
+        <div
+          className="
+ space-y-4
+ mt-8
+ "
+        >
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <ReviewCard key={review._id || review.id} {...review} />
+            ))
+          ) : (
+            <p className="text-gray-500">No reviews yet</p>
+          )}
+        </div>
+      </div>
     </div>
-
-
-
-
-
-
-
-    {/* Reviews */}
-
-    <div
-      className="
-      space-y-4
-      mt-8
-      "
-    >
-
-      {
-        product.reviews.map((review)=>(
-
-          <ReviewCard
-
-            key={review.id}
-
-            {...review}
-
-          />
-
-        ))
-      }
-
-
-    </div>
-
-
-
-  </div>
-
-
-</div>
   );
 }

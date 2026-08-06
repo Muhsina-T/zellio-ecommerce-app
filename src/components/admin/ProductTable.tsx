@@ -56,7 +56,7 @@ products.map(product=>(
 
 <div
 
-key={product.id}
+key={product._id}
 
 className="
 flex
@@ -121,7 +121,7 @@ transition
     );
 
     if (confirmed) {
-      deleteProduct(product.id);
+      deleteProduct(product._id || "");
     }
   }}
   className="

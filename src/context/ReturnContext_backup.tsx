@@ -76,6 +76,7 @@ useEffect(()=>{
 
 
 
+
 async function fetchReturns(){
 
  try{
@@ -91,7 +92,7 @@ async function fetchReturns(){
 
  const res =
  await api.get(
-  user?.role === "admin" ? "/returns" : `/returns/user/${userId}`
+ user?.role === "admin" ? "/returns" : `/returns/user/${userId}`
  );
 
 
@@ -112,6 +113,8 @@ async function fetchReturns(){
 
 
 
+
+
 async function requestReturn(
  data:{
   order:string;
@@ -123,31 +126,37 @@ async function requestReturn(
 
  try{
 
- const res =
-  await api.post(
-   "/returns",
-   data
-  );
 
- setReturns(prev=>[
-  res.data,
-  ...prev,
- ]);
+const res =
+await api.post(
+ "/returns",
+ data
+);
 
- return res.data;
 
- } catch (error) {
 
- console.error(
-  "Return request failed:",
-  error
- );
+setReturns(prev=>[
+ res.data,
+ ...prev
+]);
 
- throw error;
+return res.data;
 
- }
+}catch(error){
+
+console.error(
+"Return request failed:",
+error
+);
 
 }
+
+
+
+}
+
+
+
 
 
 async function updateReturnStatus(
@@ -196,6 +205,8 @@ console.error(error);
 
 
 
+
+
 async function deleteReturn(
  id:string
 ){
@@ -216,6 +227,7 @@ setReturns(prev=>
 );
 
 
+
 }catch(error){
 
 console.error(error);
@@ -224,6 +236,8 @@ console.error(error);
 
 
 }
+
+
 
 
 

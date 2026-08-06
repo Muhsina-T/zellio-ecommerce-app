@@ -20,12 +20,14 @@ export default function ReturnStats() {
 
 
   const completed = returns.filter(
-    r => r.status === "Completed"
+    r => r.status === "Approved"
   ).length;
 
 
 
   return (
+
+    console.log("ReturnStats.tsx rendered with returns:", returns),
 
     <div
       className="

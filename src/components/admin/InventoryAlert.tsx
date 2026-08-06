@@ -87,7 +87,7 @@ export default function InventoryAlert() {
           alerts.map(product => (
 
           <div
-            key={product.id}
+            key={product._id}
             className={`
             flex
             justify-between

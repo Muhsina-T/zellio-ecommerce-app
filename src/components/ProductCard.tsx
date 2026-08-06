@@ -11,7 +11,7 @@ export default function ProductCard({ product }: Props) {
   const navigate = useNavigate();
   const { wishlist, toggleWishlist } = useWishlist();
 
-  const isLiked = wishlist.some((p) => p.id === product.id);
+  const isLiked = wishlist.some((p) => p._id === product._id);
 
   const imageSrc =
   product.image ||
@@ -21,7 +21,7 @@ export default function ProductCard({ product }: Props) {
   
   return (
     <div
-  onClick={() => navigate(`/product/${product.id}`)}
+  onClick={() => navigate(`/product/${product._id || product.id}`)}
   className="
   group
   bg-white

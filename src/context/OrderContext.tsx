@@ -1,58 +1,123 @@
-import { createContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import useAuth from "../hooks/useAuth";
 
 import type { Order } from "../types/Order";
 
-import { saveOrder, getOrders } from "../services/order";
+import {
+  saveOrder,
+  getOrders,
+  updateOrderStatus,
+} from "../services/order";
 
 export type OrderContextType = {
   orders: Order[];
 
-  createOrder: (order: Order) => void;
+  createOrder: (order: Order) => Promise<void>;
 
-  updateStatus: (id: string, status: Order["status"]) => void;
-  updateOrder: (id: string, updates: Partial<Order>) => void;
+  updateStatus: (
+    id: string,
+    status: Order["status"]
+  ) => Promise<void>;
+
+  updateOrder: (
+    id: string,
+    updates: Partial<Order>
+  ) => Promise<void>;
 };
 
-export const OrderContext = createContext<OrderContextType | undefined>(undefined);
+export const OrderContext =
+  createContext<OrderContextType | undefined>(undefined);
 
-export default function OrderProvider({ children }: { children: ReactNode }) {
-  const [orders, setOrders] = useState<Order[]>(() => {
-    return getOrders();
-  });
+export default function OrderProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const { user } = useAuth();
+  const storageKey = user ? `zellio_orders_${user._id || user.id}` : null;
 
-  function createOrder(order: Order) {
-    saveOrder(order);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-    setOrders((prev) => [
-      ...prev,
-      order,
-    ]);
+  useEffect(() => {
+    if (!storageKey) {
+      setOrders([]);
+      return;
+    }
+
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        setOrders(JSON.parse(saved) as Order[]);
+      } catch {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    void fetchOrders();
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!storageKey) return;
+
+    localStorage.setItem(storageKey, JSON.stringify(orders));
+  }, [storageKey, orders]);
+
+  async function fetchOrders() {
+    try {
+      const data = await getOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  function updateStatus(id: string, status: Order["status"]) {
-    const updated = orders.map((order) =>
-      order.id === id
-        ? {
-            ...order,
-            status,
-            deliveredDate: status === "Delivered" ? new Date().toISOString() : undefined,
-          }
-        : order
-    );
+  async function createOrder(order: Order) {
+    try {
+      const createdOrder = await saveOrder(order);
 
-    setOrders(updated);
-
-    localStorage.setItem("zellio_orders", JSON.stringify(updated));
+      setOrders((prev) => [
+        createdOrder,
+        ...prev,
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  function updateOrder(id: string, updates: Partial<Order>) {
-    const updated = orders.map((order) =>
-      order.id === id ? { ...order, ...updates } : order
-    );
+  async function updateStatus(
+    id: string,
+    status: Order["status"]
+  ) {
+    try {
+      await updateOrderStatus(id, status);
 
-    setOrders(updated);
+      fetchOrders();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-    localStorage.setItem("zellio_orders", JSON.stringify(updated));
+  async function updateOrder(
+    id: string,
+    updates: Partial<Order>
+  ) {
+    try {
+      // If you later create a full update endpoint,
+      // replace this with updateOrder(id, updates)
+      await updateOrderStatus(
+        id,
+        updates.status as Order["status"]
+      );
+
+      fetchOrders();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (

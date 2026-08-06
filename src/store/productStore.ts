@@ -9,7 +9,7 @@ type ProductStore = {
 
   addProduct: (product: Product)=>void;
 
-  deleteProduct:(id:number)=>void;
+  deleteProduct:(id:string)=>void;
 
 };
 
@@ -29,13 +29,11 @@ export const useProductStore = create<ProductStore>((set)=>({
   })),
 
 
-  deleteProduct:(id)=>set((state)=>({
-
-    products:
-    state.products.filter(
-      item=>item.id !== id
+  deleteProduct: (id) =>
+  set((state) => ({
+    products: state.products.filter(
+      item => item._id !== id
     )
-
   }))
 
 

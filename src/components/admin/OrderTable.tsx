@@ -45,7 +45,7 @@ export default function OrderTable() {
           <tbody>
             {orders.map((order) => (
               <OrderRow
-                key={order.id}
+                key={order._id || order.orderNumber}
                 order={order}
                 updateStatus={updateStatus}
               />
@@ -57,7 +57,7 @@ export default function OrderTable() {
       <div className="lg:hidden space-y-2 mt-4">
         {orders.map((order) => (
           <div
-            key={order.id}
+            key={order._id || order.orderNumber}
             className="bg-white rounded-3xl p-4 border border-[#E5E5DD] shadow-sm"
           >
             <div className="flex items-start justify-between gap-4">
@@ -66,7 +66,7 @@ export default function OrderTable() {
                   Order ID
                 </p>
                 <p className="mt-2 text-base font-medium text-[#13160F]">
-                  {order.id}
+                  {order._id}
                 </p>
               </div>
               <div className="text-right">
@@ -96,7 +96,7 @@ export default function OrderTable() {
               </div>
               <select
                 value={order.status}
-                onChange={(e) => updateStatus(order.id, e.target.value as Order["status"])}
+                onChange={(e) => updateStatus(order._id || order.orderNumber, e.target.value as Order["status"])}
                 className="w-full bg-white border border-[#D7D7CD] rounded-xl px-3 py-2 text-sm text-[#13160F] outline-none cursor-pointer focus:border-[#AAD10A]"
               >
                 <option>Processing</option>

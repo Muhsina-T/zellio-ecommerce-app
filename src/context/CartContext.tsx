@@ -3,24 +3,27 @@ import { createContext, useEffect, useState, type ReactNode } from "react";
 import type { Product } from "../types/Product";
 import type { CartItem } from "../types/Cart";
 
-
+import api from "../api/api";
+import useAuth from "../hooks/useAuth";
 
 type CartContextType = {
   cart: CartItem[];
 
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product) => Promise<void>;
 
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: string) => Promise<void>;
 
-  increase: (id: number) => void;
+  increase: (id: string) => Promise<void>;
 
-  decrease: (id: number) => void;
+  decrease: (id: string) => Promise<void>;
+
+  clearCart: () => Promise<void>;
 
   total: number;
 };
 
 export const CartContext = createContext<CartContextType | undefined>(
-  undefined,
+  undefined
 );
 
 type Props = {
@@ -28,93 +31,115 @@ type Props = {
 };
 
 export default function CartProvider({ children }: Props) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("zellio_cart");
+  const { user } = useAuth();
+  const storageKey = user ? `zellio_cart_${user._id || user.id}` : null;
 
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("zellio_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!storageKey) {
+      setCart([]);
+      return;
+    }
 
-  function addToCart(product: Product) {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item,
-        );
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        setCart(JSON.parse(saved) as CartItem[]);
+      } catch {
+        localStorage.removeItem(storageKey);
       }
+    }
 
-      return [
-        ...prev,
+    void fetchCart();
+  }, [storageKey]);
 
-        {
-          product,
-          quantity: 1,
-        },
-      ];
-    });
+  useEffect(() => {
+    if (!storageKey) return;
+
+    localStorage.setItem(storageKey, JSON.stringify(cart));
+  }, [storageKey, cart]);
+
+  async function fetchCart() {
+    try {
+      const res = await api.get("/cart");
+
+      setCart(res.data.items || []);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
   }
 
-  function removeFromCart(id: number) {
-    setCart((prev) => prev.filter((item) => item.product.id !== id));
+  async function addToCart(product: Product) {
+    try {
+      await api.post("/cart", {
+        productId: product._id,
+        quantity: 1,
+      });
+
+      await fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  function increase(id: number) {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.product.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item,
-      ),
-    );
+  async function removeFromCart(id: string) {
+    try {
+      await api.delete(`/cart/${id}`);
+
+      await fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  function decrease(id: number) {
-    setCart((prev) =>
-      prev.map((item) => {
-        if (item.product.id === id && item.quantity > 1) {
-          return {
-            ...item,
-            quantity: item.quantity - 1,
-          };
-        }
+  async function increase(id: string) {
+    try {
+      await api.put(`/cart/${id}`, {
+        action: "increase",
+      });
 
-        return item;
-      }),
-    );
+      await fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function decrease(id: string) {
+    try {
+      await api.put(`/cart/${id}`, {
+        action: "decrease",
+      });
+
+      await fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function clearCart() {
+    try {
+      await api.delete("/cart/clear");
+      await fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
-
-    0,
+    0
   );
 
   return (
     <CartContext.Provider
       value={{
         cart,
-
         addToCart,
-
         removeFromCart,
-
         increase,
-
         decrease,
-
+        clearCart,
         total,
       }}
     >
@@ -122,4 +147,3 @@ export default function CartProvider({ children }: Props) {
     </CartContext.Provider>
   );
 }
-

@@ -37,7 +37,7 @@ export default function OrderRow({
         font-medium
         "
       >
-        {order.id}
+        {order._id}
       </td>
 
 
@@ -96,7 +96,7 @@ export default function OrderRow({
 
           onChange={(e) =>
             updateStatus(
-              order.id,
+              order._id || order.orderNumber,
               e.target.value as Order["status"]
             )
           }

@@ -26,7 +26,7 @@ export default function LowStockTable() {
         lowStock.map((product) => (
 
           <div
-            key={product.id}
+            key={product._id}
             className="flex justify-between py-3"
           >
 

@@ -90,7 +90,7 @@ export default function Cart() {
 
             cart.map((item) => (
               <CartItem
-                key={item.product.id}
+                key={item.product._id}
                 item={item}
               />
             ))

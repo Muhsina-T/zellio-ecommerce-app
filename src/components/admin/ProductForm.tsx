@@ -151,7 +151,7 @@ export default function ProductForm({ editingProduct, clearEditing }: Props) {
   }
 
   const product: Product = {
-    id: editingProduct ? editingProduct.id : Date.now(),
+  _id: editingProduct?._id,
 
     name,
     brand,
