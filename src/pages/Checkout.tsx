@@ -52,6 +52,72 @@ export default function Checkout() {
   };
 
   async function confirmOrder() {
+    if (method === "Card") {
+      try {
+        const response = await fetch("http://localhost:5000/api/payment/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: finalPrice }),
+        });
+        const data = await response.json();
+        
+        if (!data.success) {
+          setError(data.message || "Failed to create payment order");
+          return;
+        }
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: data.order.amount,
+          currency: data.order.currency,
+          name: "Zellio",
+          description: "Payment for order",
+          order_id: data.order.id,
+          handler: async function (response: any) {
+            const verifyRes = await fetch("http://localhost:5000/api/payment/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            
+            if (verifyData.success) {
+              await processOrderCreation();
+            } else {
+              setError("Payment verification failed");
+            }
+          },
+          prefill: {
+            name: address.name,
+            contact: address.phone,
+          },
+          theme: {
+            color: "#AAD10A",
+          },
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (response: any) {
+          setError(response.error.description);
+        });
+        rzp.open();
+      } catch (err) {
+        console.error("Payment error:", err);
+        setError("Something went wrong during payment");
+      }
+    } else {
+      await processOrderCreation();
+    }
+  }
+
+  async function processOrderCreation() {
     await createOrder({
       id: generateId(),
       orderNumber: "ZEL" + Math.floor(100000 + Math.random() * 900000),
