@@ -17,7 +17,7 @@ import {
 export type OrderContextType = {
   orders: Order[];
 
-  createOrder: (order: Order) => Promise<void>;
+  createOrder: (order: Order) => Promise<Order | undefined>;
 
   updateStatus: (
     id: string,
@@ -76,7 +76,7 @@ export default function OrderProvider({
     }
   }
 
-  async function createOrder(order: Order) {
+  async function createOrder(order: Order): Promise<Order | undefined> {
     try {
       const createdOrder = await saveOrder(order);
 
@@ -84,6 +84,7 @@ export default function OrderProvider({
         createdOrder,
         ...prev,
       ]);
+      return createdOrder;
     } catch (error) {
       console.error(error);
     }

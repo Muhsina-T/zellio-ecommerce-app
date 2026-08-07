@@ -86,7 +86,11 @@ export default function OrderTable() {
               </div>
               <div>
                 <p className="text-[#7A7E73]">Payment</p>
-                <p className="mt-1">{order.payment}</p>
+                <p className="mt-1">
+                  {typeof order.payment === "string" 
+                    ? order.payment 
+                    : (order.payment as any)?.method}
+                </p>
               </div>
             </div>
 

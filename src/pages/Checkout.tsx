@@ -90,7 +90,11 @@ export default function Checkout() {
             const verifyData = await verifyRes.json();
             
             if (verifyData.success) {
-              await processOrderCreation();
+              await processOrderCreation({
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature
+              });
             } else {
               setError("Payment verification failed");
             }
@@ -117,7 +121,7 @@ export default function Checkout() {
     }
   }
 
-  async function processOrderCreation() {
+  async function processOrderCreation(paymentDetails?: any) {
     await createOrder({
       id: generateId(),
       orderNumber: "ZEL" + Math.floor(100000 + Math.random() * 900000),
@@ -128,7 +132,11 @@ export default function Checkout() {
         phone: address.phone,
         address: `${address.address}, ${address.additionalAddress}`,
       },
-      payment: method,
+      payment: paymentDetails ? {
+        method,
+        status: "Paid",
+        ...paymentDetails
+      } : method,
       status: "Processing",
       date: new Date().toISOString(),
       canReturn: true,

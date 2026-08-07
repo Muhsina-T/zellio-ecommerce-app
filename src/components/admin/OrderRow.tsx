@@ -59,7 +59,9 @@ export default function OrderRow({
         text-[#3F443A]
         "
       >
-        {order.payment}
+        {typeof order.payment === "string" 
+          ? order.payment 
+          : (order.payment as any)?.method}
       </td>
 
 

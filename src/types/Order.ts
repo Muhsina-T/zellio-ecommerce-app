@@ -18,7 +18,13 @@ export interface Order {
 
   address: Address;
 
-  payment: string;
+  payment: {
+    method: string;
+    status: string;
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
+    razorpaySignature?: string;
+  } | string;
 
   status:
     | "Processing"
