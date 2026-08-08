@@ -8,6 +8,7 @@ import useCart from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 import toast from "react-hot-toast";
 
@@ -31,6 +32,7 @@ export default function ProductDetails({ product }: Props) {
   const navigate = useNavigate();
 
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const reviews = product.reviews ?? [];
   return (
     <div
@@ -41,7 +43,7 @@ export default function ProductDetails({ product }: Props) {
   "
     >
       <ProductGallery
-        variants={product.variants || []}
+        variants={product.variants?.length ? product.variants : [initialVariant]}
         selectedVariant={selectedVariant}
         onSelectVariant={setSelectedVariant}
       />
@@ -154,6 +156,12 @@ export default function ProductDetails({ product }: Props) {
         >
           <button
             onClick={() => {
+              if (!user) {
+                toast.error("Please login first");
+                navigate("/login");
+                return;
+              }
+
               addToCart({
                 ...product,
 
@@ -196,6 +204,12 @@ export default function ProductDetails({ product }: Props) {
 
           <button
             onClick={() => {
+              if (!user) {
+                toast.error("Please login first");
+                navigate("/login");
+                return;
+              }
+
               addToCart({
                 ...product,
 

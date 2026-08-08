@@ -57,9 +57,7 @@ export default function AppRoutes() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
           }
         />
       
@@ -68,9 +66,7 @@ export default function AppRoutes() {
         <Route
           path="/product/:id"
           element={
-            <ProtectedRoute>
               <Product />
-            </ProtectedRoute>
           }
         />
       </Route>

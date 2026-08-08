@@ -57,14 +57,14 @@ export default function ProductForm({ editingProduct, clearEditing }: Props) {
 );
   } else {
     setVariants([
-  {
-    id: Date.now(),
-    storage: "",
-    color: "",
-    price: "",
-    image: "",
-  },
-]);
+      {
+        id: Date.now(),
+        storage: editingProduct.storage || "",
+        color: editingProduct.color || "",
+        price: editingProduct.price ? String(editingProduct.price) : "",
+        image: editingProduct.image || "",
+      },
+    ]);
   }
 }, [editingProduct]);
 

@@ -2,7 +2,8 @@ import { Heart, Star } from "lucide-react";
 import type { Product } from "../types/Product";
 import { useNavigate } from "react-router-dom";
 import useWishlist from "../hooks/useWishlist";
-
+import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 type Props = {
   product: Product;
 };
@@ -10,6 +11,7 @@ type Props = {
 export default function ProductCard({ product }: Props) {
   const navigate = useNavigate();
   const { wishlist, toggleWishlist } = useWishlist();
+  const { user } = useAuth();
 
   const isLiked = wishlist.some((p) => p._id === product._id);
 
@@ -74,6 +76,13 @@ export default function ProductCard({ product }: Props) {
       onClick={(e)=>{
 
         e.stopPropagation();
+        
+        if (!user) {
+          toast.error("Please login first");
+          navigate("/login");
+          return;
+        }
+
         toggleWishlist(product);
 
       }}
