@@ -1,5 +1,5 @@
 import ProductGallery from "./ProductGallery";
-import ReviewCard from "./ReviewCard";
+// import ReviewCard from "./ReviewCard";
 
 import type { Product, Variant } from "../types/Product";
 
@@ -33,7 +33,7 @@ export default function ProductDetails({ product }: Props) {
 
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const reviews = product.reviews ?? [];
+  // const reviews = product.reviews ?? [];
   return (
     <div
       className="
