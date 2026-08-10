@@ -247,7 +247,7 @@ export default function ProductDetails({ product }: Props) {
 
         {/* Reviews */}
 
-        <div
+        {/* <div
           className="
  space-y-4
  mt-8
@@ -260,7 +260,7 @@ export default function ProductDetails({ product }: Props) {
           ) : (
             <p className="text-gray-500">No reviews yet</p>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

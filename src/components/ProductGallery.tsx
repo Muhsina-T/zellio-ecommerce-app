@@ -39,8 +39,8 @@ export default function ProductGallery({
           className="
             w-full
             h-[250px]
-            sm:h-[350px]
-            lg:h-[450px]
+            sm:h-[280px]
+            lg:h-[340px]
             object-contain
           "
         />
