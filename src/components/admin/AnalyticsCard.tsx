@@ -8,7 +8,6 @@ type Props = {
   size?: "small" | "default";
 };
 
-
 export default function AnalyticsCard({
   title,
   value,
@@ -19,7 +18,6 @@ export default function AnalyticsCard({
   const isSmall = size === "small";
 
   return (
-
     <div
       className={`
       bg-white
@@ -34,18 +32,13 @@ export default function AnalyticsCard({
       duration-300
       `}
     >
-
-
       <div
         className={`
         flex
         ${isSmall ? "flex-col 2xl:flex-row gap-2 2xl:gap-0 items-start 2xl:items-center justify-between" : "justify-between items-center"}
         `}
       >
-
-
         <div>
-
           <p
             className={`
             text-[#7A7E73]
@@ -56,7 +49,6 @@ export default function AnalyticsCard({
             {title}
           </p>
 
-
           <h2
             className={`
             ${isSmall ? "text-base sm:text-lg mt-0.5" : "text-4xl mt-3"}
@@ -66,11 +58,7 @@ export default function AnalyticsCard({
           >
             {value}
           </h2>
-
-
         </div>
-
-
 
         <div
           className={`
@@ -79,17 +67,9 @@ export default function AnalyticsCard({
           ${color}
           `}
         >
-
           {icon}
-
         </div>
-
-
-
       </div>
-
-
     </div>
-
   );
 }

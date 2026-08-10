@@ -4,8 +4,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import useAuth from "../hooks/useAuth";
 
+import useAuth from "../hooks/useAuth";
 import type { Order } from "../types/Order";
 
 import {
@@ -39,33 +39,8 @@ export default function OrderProvider({
   children: ReactNode;
 }) {
   const { user } = useAuth();
-  const storageKey = user ? `zellio_orders_${user._id || user.id}` : null;
 
   const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    if (!storageKey) {
-      setOrders([]);
-      return;
-    }
-
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        setOrders(JSON.parse(saved) as Order[]);
-      } catch {
-        localStorage.removeItem(storageKey);
-      }
-    }
-
-    void fetchOrders();
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (!storageKey) return;
-
-    localStorage.setItem(storageKey, JSON.stringify(orders));
-  }, [storageKey, orders]);
 
   async function fetchOrders() {
     try {
@@ -76,7 +51,17 @@ export default function OrderProvider({
     }
   }
 
-  async function createOrder(order: Order): Promise<Order | undefined> {
+  useEffect(() => {
+    if (user) {
+      void fetchOrders();
+    } else {
+      setOrders([]);
+    }
+  }, [user]);
+
+  async function createOrder(
+    order: Order
+  ): Promise<Order | undefined> {
     try {
       const createdOrder = await saveOrder(order);
 
@@ -84,6 +69,7 @@ export default function OrderProvider({
         createdOrder,
         ...prev,
       ]);
+
       return createdOrder;
     } catch (error) {
       console.error(error);
@@ -97,7 +83,7 @@ export default function OrderProvider({
     try {
       await updateOrderStatus(id, status);
 
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error(error);
     }
@@ -108,14 +94,12 @@ export default function OrderProvider({
     updates: Partial<Order>
   ) {
     try {
-      // If you later create a full update endpoint,
-      // replace this with updateOrder(id, updates)
       await updateOrderStatus(
         id,
         updates.status as Order["status"]
       );
 
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       console.error(error);
     }

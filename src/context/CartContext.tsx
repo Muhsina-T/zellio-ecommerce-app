@@ -32,33 +32,13 @@ type Props = {
 
 export default function CartProvider({ children }: Props) {
   const { user } = useAuth();
-  const storageKey = user ? `zellio_cart_${user._id || user.id}` : null;
+  
 
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  useEffect(() => {
-    if (!storageKey) {
-      setCart([]);
-      return;
-    }
+  
 
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        setCart(JSON.parse(saved) as CartItem[]);
-      } catch {
-        localStorage.removeItem(storageKey);
-      }
-    }
-
-    void fetchCart();
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (!storageKey) return;
-
-    localStorage.setItem(storageKey, JSON.stringify(cart));
-  }, [storageKey, cart]);
+  
 
   async function fetchCart() {
     try {
@@ -69,6 +49,14 @@ export default function CartProvider({ children }: Props) {
       console.error("Failed to fetch cart:", error);
     }
   }
+
+  useEffect(() => {
+  if (user) {
+    void fetchCart();
+  } else {
+    setCart([]);
+  }
+}, [user]);
 
   async function addToCart(product: Product) {
     try {
