@@ -11,19 +11,12 @@ type ProductContextType = {
 
   addProduct: (product: Product) => Promise<void>;
 
-updateProduct: (product: Product) => Promise<void>;
+  updateProduct: (product: Product) => Promise<void>;
 
   deleteProduct: (id: string) => Promise<void>;
 
-  
-
-  decreaseStock: (
-    productId: string,
-    quantity: number
-  ) => void;
+  decreaseStock: (productId: string, quantity: number) => void;
 };
-
-
 
 export const ProductContext = createContext<ProductContextType | undefined>(
   undefined,
@@ -34,81 +27,77 @@ type Props = {
 };
 
 export default function ProductProvider({ children }: Props) {
- const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-  fetchProducts();
-}, []);
+    fetchProducts();
+  }, []);
 
-async function fetchProducts() {
-  try {
-    const res = await api.get("/products");
-    setProducts(res.data);
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
+  async function fetchProducts() {
+    try {
+      const res = await api.get("/products");
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
 
-    // Optional fallback while backend is unavailable
-    setProducts(mobiles);
+      // Optional fallback while backend is unavailable
+      setProducts(mobiles);
+    }
   }
-}
 
   async function addProduct(product: Product) {
-  try {
-    const res = await api.post("/products", product);
-    setProducts((prev) => [...prev, res.data]);
-  } catch (error) {
-    console.error(error);
+    try {
+      const res = await api.post("/products", product);
+      setProducts((prev) => [...prev, res.data]);
+    } catch (error) {
+      console.error(error);
+    }
   }
-}
 
-async function updateProduct(product: Product) {
-  try {
-    const res = await api.put(`/products/${product._id}`, product);
+  async function updateProduct(product: Product) {
+    try {
+      const res = await api.put(`/products/${product._id}`, product);
 
+      setProducts((prev) =>
+        prev.map((item) => (item._id === res.data._id ? res.data : item)),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function deleteProduct(id: string) {
+    try {
+      await api.delete(`/products/${id}`);
+
+      setProducts((prev) => prev.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function decreaseStock(productId: string, quantity: number) {
     setProducts((prev) =>
-      prev.map((item) =>
-        item._id === res.data._id ? res.data : item
-      )
+      prev.map((product) =>
+        product._id === productId
+          ? {
+              ...product,
+              stock: Math.max(0, product.stock - quantity),
+            }
+          : product,
+      ),
     );
-  } catch (error) {
-    console.error(error);
   }
-}
-
-async function deleteProduct(id: string) {
-  try {
-    await api.delete(`/products/${id}`);
-
-    setProducts((prev) =>
-      prev.filter((item) => item._id !== id)
-    );
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-function decreaseStock(productId: string, quantity: number) {
-  setProducts((prev) =>
-    prev.map((product) =>
-      product._id === productId
-        ? {
-            ...product,
-            stock: Math.max(0, product.stock - quantity),
-          }
-        : product
-    )
-  );
-}
 
   return (
     <ProductContext.Provider
       value={{
-  products,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  decreaseStock,
-}}
+        products,
+        addProduct,
+        updateProduct,
+        deleteProduct,
+        decreaseStock,
+      }}
     >
       {children}
     </ProductContext.Provider>

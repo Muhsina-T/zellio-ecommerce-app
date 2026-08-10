@@ -37,7 +37,6 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 
 import Profile from "../pages/Profile";
 
-
 export default function AppRoutes() {
   return (
     <Routes>
@@ -47,28 +46,14 @@ export default function AppRoutes() {
 
       <Route path="/signup" element={<Signup />} />
 
-      <Route 
-  path="/profile" 
-  element={<Profile />} 
-/>
+      <Route path="/profile" element={<Profile />} />
 
       {/* User Protected */}
-      
-        <Route
-          path="/"
-          element={
-              <Home />
-          }
-        />
-      
+
+      <Route path="/" element={<Home />} />
 
       <Route element={<Layout />}>
-        <Route
-          path="/product/:id"
-          element={
-              <Product />
-          }
-        />
+        <Route path="/product/:id" element={<Product />} />
       </Route>
       <Route element={<Layout />}>
         <Route
@@ -149,15 +134,15 @@ export default function AppRoutes() {
           </AdminRoute>
         }
       />
-    <Route element={<Layout />}>
-      <Route
-        path="/returns"
-        element={
-          <ProtectedRoute>
-            <Returns />
-          </ProtectedRoute>
-        }
-      />
+      <Route element={<Layout />}>
+        <Route
+          path="/returns"
+          element={
+            <ProtectedRoute>
+              <Returns />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route

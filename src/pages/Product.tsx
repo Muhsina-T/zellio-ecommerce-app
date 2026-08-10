@@ -11,10 +11,7 @@ export default function Product() {
 
   const { products } = useProducts();
 
- const product = products.find(
-  (item) => item._id === id
-);
-
+  const product = products.find((item) => item._id === id);
 
   if (!product) {
     return (
@@ -39,7 +36,6 @@ export default function Product() {
       </div>
     );
   }
-
 
   return (
     <div
