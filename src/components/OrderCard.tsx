@@ -35,9 +35,8 @@ export default function OrderCard({ order }: Props) {
   const { returns } = useReturn();
   return (
     <div className="rounded-3xl w-full overflow-hidden">
-
-  <div
-    className="
+      <div
+        className="
     group
     bg-white
     rounded-3xl
@@ -50,13 +49,11 @@ export default function OrderCard({ order }: Props) {
     p-3
     sm:p-4
     "
-  >
+      >
+        {/* Header */}
 
-
-    {/* Header */}
-
-    <div
-      className="
+        <div
+          className="
       flex
       flex-col
       sm:flex-row
@@ -64,38 +61,31 @@ export default function OrderCard({ order }: Props) {
       sm:justify-between
       gap-4
       "
-    >
-
-      <div>
-
-        <h2
-          className="
+        >
+          <div>
+            <h2
+              className="
           text-lg
           font-bold
           text-[#13160F]
           "
-        >
-          Order #{order.orderNumber}
-        </h2>
+            >
+              Order #{order.orderNumber}
+            </h2>
 
-
-        <p
-          className="
+            <p
+              className="
           text-xs
           sm:text-sm
           text-[#7A7E73]
           "
-        >
-          {getOrderPlacementDate(order)}
-        </p>
+            >
+              {getOrderPlacementDate(order)}
+            </p>
+          </div>
 
-      </div>
-
-
-
-
-      <span
-        className="
+          <span
+            className="
         inline-flex
         w-fit
         bg-[#AAD10A]/15
@@ -106,42 +96,25 @@ export default function OrderCard({ order }: Props) {
         py-1.5
         rounded-full
         "
-      >
-        {order.status}
-      </span>
+          >
+            {order.status}
+          </span>
+        </div>
 
+        {/* Items */}
 
-    </div>
+        <div className="mt-4 space-y-2">
+          {order.items.map((item) => {
+            const itemRequested = returns.some(
+              (r) =>
+                r.order?._id === order._id &&
+               r.product?._id === item.product?._id
+            );
 
-
-
-
-
-
-
-    {/* Items */}
-
-    <div className="mt-4 space-y-2">
-
-
-      {order.items.map((item)=>{
-
-
-        const itemRequested = returns.some(
-          (r) =>
-            r.order?._id === order._id &&
-            r.product?._id === item.product._id
-        );
-
-
-
-        return (
-
-          <div
-
-            key={item.product._id}
-
-            className="
+            return (
+              <div
+                key={`${item.product?._id}-${item.variantId}`}
+                className="
             flex
             flex-col
             sm:flex-row
@@ -152,13 +125,9 @@ export default function OrderCard({ order }: Props) {
             pb-3
             w-full
             "
-
-          >
-
-
-
-            <p
-              className="
+              >
+                <p
+                  className="
               font-medium
               text-sm
               text-[#3F443A]
@@ -167,26 +136,21 @@ export default function OrderCard({ order }: Props) {
               min-w-0
               flex-1
               "
-            >
+                >
+                  {item.product?.name ?? "Product unavailable"}
 
-              {item.product.name}
-
-              <span
-                className="
+                  <span
+                    className="
                 text-[#7A7E73]
                 "
-              >
-                {" "}× {item.quantity}
-              </span>
+                  >
+                    {" "}
+                    × {item.quantity}
+                  </span>
+                </p>
 
-            </p>
-
-
-
-
-
-            <div
-              className="
+                <div
+                  className="
               flex
               flex-col
               sm:flex-row
@@ -194,87 +158,57 @@ export default function OrderCard({ order }: Props) {
               gap-2
               sm:gap-4
               "
-            >
-
-
-              <p
-                className="
+                >
+                  <p
+                    className="
                 font-semibold
                 text-sm
                 text-[#13160F]
                 "
-              >
-                ₹{(
-                  item.product.price *
-                  item.quantity
-                ).toLocaleString()}
-              </p>
+                  >
+                     ₹{(item.sellingPrice * item.quantity).toLocaleString()}
+                  </p>
 
+                  {(() => {
+                    console.log("eeeeeeeeeeeee", order.deliveredDate);
+                    const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
+                    const deliveryDate = order.deliveredDate || order.date;
+                    const isDelivered =
+                      String(order.status || "")
+                        .trim()
+                        .toLowerCase() === "delivered";
+                    const canRequestItem =
+                      isDelivered &&
+                      order.canReturn &&
+                      deliveryDate &&
+                      new Date().getTime() - new Date(deliveryDate).getTime() <=
+                        sevenDays;
 
-                
+                    if (!canRequestItem) return null;
 
-              {
-
-                
-
-                (()=>{
-
-                  console.log("eeeeeeeeeeeee", order.deliveredDate);
-                  const sevenDays =
-                  7 * 24 * 60 * 60 * 1000;
-
-
-                  const deliveryDate = order.deliveredDate || order.date;
-                  const isDelivered = String(order.status || "").trim().toLowerCase() === "delivered";
-                  const canRequestItem =
-                  isDelivered &&
-                  order.canReturn &&
-                  deliveryDate &&
-                  new Date().getTime() -
-                  new Date(deliveryDate).getTime()
-                  <= sevenDays;
-
-
-
-
-                  if(!canRequestItem)
-                    return null;
-
-
-
-                  if(itemRequested){
-                    
-                    return (
-
-                      <span
-                        className="
+                    if (itemRequested) {
+                      return (
+                        <span
+                          className="
                         text-sm
                         font-medium
                         text-red-500
                         "
-                      >
-                        Return Requested
-                      </span>
+                        >
+                          Return Requested
+                        </span>
+                      );
+                    }
 
-                    );
-
-                  }
-
-
-
-
-                  return (
-
-                    <button
-
-                      onClick={() =>
-                        setShowReturnProductId(
-                          item.product._id || item.product.name || null
-                        )
-                      }
-
-                      className="
+                    return (
+                      <button
+                        onClick={() =>
+                          setShowReturnProductId(
+                            item.product?._id || item.product?.name || null
+                          )
+                        }
+                        className="
                       w-full
                       sm:w-auto
                       text-xs
@@ -287,122 +221,62 @@ export default function OrderCard({ order }: Props) {
                       hover:bg-[#C8EE2C]
                       transition
                       "
+                      >
+                        Return
+                      </button>
+                    );
+                  })()}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-                    >
+        {/* Total */}
 
-                      Return
-
-                    </button>
-
-                  );
-
-
-                })()
-
-              }
-
-
-
-            </div>
-
-
-
-          </div>
-
-        );
-
-      })}
-
-
-    </div>
-
-
-
-
-
-
-
-    {/* Total */}
-
-    <h3
-      className="
+        <h3
+          className="
       mt-4
       text-base
       sm:text-lg
       font-bold
       text-[#5C8A05]
       "
-    >
+        >
+          Total: ₹{order.total.toLocaleString()}
+        </h3>
 
-      Total: ₹{order.total.toLocaleString()}
+        {/* Tracker */}
 
-    </h3>
+        <div className="mt-4">
+          <OrderTracker status={order.status} />
+        </div>
 
+        {/* Return Request */}
 
+        {(() => {
+          const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
+          const deliveryDate = order.deliveredDate || order.date;
+          const isDelivered =
+            String(order.status || "")
+              .trim()
+              .toLowerCase() === "delivered";
+          const canRequest =
+            isDelivered &&
+            order.canReturn &&
+            deliveryDate &&
+            new Date().getTime() - new Date(deliveryDate).getTime() <=
+              sevenDays;
 
-
-
-    {/* Tracker */}
-
-    <div className="mt-4">
-
-      <OrderTracker
-        status={order.status}
-      />
-
-    </div>
-
-
-
-
-
-
-
-    {/* Return Request */}
-
-    {
-      (()=>{
-
-
-        const sevenDays =
-        7 * 24 * 60 * 60 * 1000;
-
-
-
-        const deliveryDate = order.deliveredDate || order.date;
-        const isDelivered = String(order.status || "").trim().toLowerCase() === "delivered";
-        const canRequest =
-        isDelivered &&
-        order.canReturn &&
-        deliveryDate &&
-        new Date().getTime() -
-        new Date(deliveryDate).getTime()
-        <= sevenDays;
-
-
-
-        return (
-
-          canRequest && (
-
-            <>
-
-              {
-                showReturn && (
-
+          return (
+            canRequest && (
+              <>
+                {showReturn && (
                   <div className="mt-4">
-
-
                     <div className="flex justify-end">
-
-
                       <button
-
-                        onClick={() =>
-                          setShowReturn(false)
-                        }
-
+                        onClick={() => setShowReturn(false)}
                         className="
                         text-sm
                         font-medium
@@ -411,122 +285,52 @@ export default function OrderCard({ order }: Props) {
                         transition
                         "
                       >
-
                         Close
-
                       </button>
-
-
                     </div>
 
-
-
-                    <ReturnRequest
-                      orderId={order._id || order.orderNumber}
-                    />
-
-
+                    <ReturnRequest orderId={order._id || order.orderNumber} />
                   </div>
+                )}
 
-                )
-              }
+                {showReturnProductId !== null &&
+                  (() => {
+                    const item = order.items.find(
+                      (i) =>
+                        (i.product?._id || i.product?.name || "") ===
+                        (showReturnProductId || ""),
+                    );
 
+                    if (!item) return null;
 
-
-
-
-
-
-              {
-                showReturnProductId !== null &&
-
-                (()=>{
-
-
-                  const item =
-                  order.items.find(
-                    i =>
-                    (i.product._id || i.product.name || "") ===
-                    (showReturnProductId || "")
-                  );
-
-
-                  if(!item)
-                    return null;
-
-
-
-                  return (
-
-                    <div className="mt-4">
-
-
-                      <div className="flex justify-end">
-
-
-                        <button
-
-                          onClick={() =>
-                            setShowReturnProductId(null)
-                          }
-
-                          className="
+                    return (
+                      <div className="mt-4">
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => setShowReturnProductId(null)}
+                            className="
                           text-[#7A7E73]
                           hover:text-[#AAD10A]
                           transition
                           "
+                          >
+                            Close
+                          </button>
+                        </div>
 
-                        >
-
-                          Close
-
-                        </button>
-
-
+                        <ReturnRequest
+                          orderId={order._id || order.orderNumber}
+                          productId={showReturnProductId}
+                          quantity={item.quantity}
+                        />
                       </div>
-
-
-
-                      <ReturnRequest
-
-                        orderId={order._id || order.orderNumber}
-
-                        productId={
-                          showReturnProductId
-                        }
-
-                        quantity={
-                          item.quantity
-                        }
-
-                      />
-
-
-                    </div>
-
-                  );
-
-
-                })()
-
-              }
-
-
-            </>
-
-          )
-
-        );
-
-
-      })()
-
-    }
-
-
-
-  </div>
-
-</div>
+                    );
+                  })()}
+              </>
+            )
+          );
+        })()}
+      </div>
+    </div>
   );
 }

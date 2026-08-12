@@ -16,6 +16,8 @@ type ProductContextType = {
   deleteProduct: (id: string) => Promise<void>;
 
   decreaseStock: (productId: string, quantity: number) => void;
+
+  searchProducts: (search: string) => Promise<void>;
 };
 
 export const ProductContext = createContext<ProductContextType | undefined>(
@@ -36,12 +38,26 @@ export default function ProductProvider({ children }: Props) {
   async function fetchProducts() {
     try {
       const res = await api.get("/products");
+
       setProducts(res.data);
     } catch (error) {
       console.error("Failed to fetch products:", error);
 
-      // Optional fallback while backend is unavailable
       setProducts(mobiles);
+    }
+  }
+
+  async function searchProducts(search: string) {
+    try {
+      const res = await api.get("/products", {
+        params: {
+          search,
+        },
+      });
+
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Search failed:", error);
     }
   }
 
@@ -97,6 +113,7 @@ export default function ProductProvider({ children }: Props) {
         updateProduct,
         deleteProduct,
         decreaseStock,
+        searchProducts,
       }}
     >
       {children}

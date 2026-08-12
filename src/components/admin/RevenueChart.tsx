@@ -3,50 +3,143 @@ import {
   LineChart,
   Line,
   XAxis,
+  YAxis,
   Tooltip,
 } from "recharts";
 
-const data = [
-  { month: "Jan", sales: 20000 },
-  { month: "Feb", sales: 45000 },
-  { month: "Mar", sales: 35000 },
-  { month: "Apr", sales: 70000 },
-  { month: "May", sales: 95000 },
-  { month: "Jun", sales: 85000 },
-];
+import type { Order } from "../../types/Order";
 
-export default function RevenueChart() {
+type RevenueChartProps = {
+  orders: Order[];
+};
+
+export default function RevenueChart({
+  orders,
+}: RevenueChartProps) {
+  // Create last 6 months
+  const now = new Date();
+
+  const months = Array.from({ length: 6 }, (_, index) => {
+    const date = new Date(
+      now.getFullYear(),
+      now.getMonth() - (5 - index),
+      1
+    );
+
+    return {
+      month: date.toLocaleString("en-US", {
+        month: "short",
+      }),
+      year: date.getFullYear(),
+      monthNumber: date.getMonth(),
+    };
+  });
+
+  // Calculate revenue for each month
+  const data = months.map((month) => {
+    const monthlyRevenue = orders
+      .filter((order) => {
+        const orderDate = new Date(
+          order.createdAt || order.date
+        );
+
+        return (
+          orderDate.getFullYear() === month.year &&
+          orderDate.getMonth() === month.monthNumber
+        );
+      })
+      .reduce(
+        (sum, order) =>
+          sum + Number(order.total || 0),
+        0
+      );
+
+    return {
+      month: month.month,
+      sales: monthlyRevenue,
+    };
+  });
+
   return (
-    <div className="bg-slate-900 rounded-3xl p-6">
+    <div className="w-full rounded-2xl lg:rounded-3xl bg-white border border-[#E5E5DD] p-4 sm:p-5 lg:p-6 shadow-sm">
 
-      <h2 className="text-2xl font-bold mb-6">
-
+      <h2 className="mb-4 text-lg font-bold text-[#13160F] sm:text-xl lg:mb-6 lg:text-2xl">
         Monthly Revenue
-
       </h2>
 
-      <ResponsiveContainer
-        width="100%"
-        height={300}
-      >
+      <div className="w-full h-[220px] sm:h-[260px] lg:h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{
+              top: 10,
+              right: 10,
+              left: 0,
+              bottom: 5,
+            }}
+          >
+            <XAxis
+              dataKey="month"
+              tick={{
+                fontSize: 12,
+                fill: "#6B6F63",
+              }}
+              tickMargin={8}
+              axisLine={{
+                stroke: "#E5E5DD",
+              }}
+              tickLine={{
+                stroke: "#E5E5DD",
+              }}
+            />
 
-        <LineChart data={data}>
+            <YAxis
+              tick={{
+                fontSize: 11,
+                fill: "#6B6F63",
+              }}
+              width={55}
+              tickFormatter={(value) =>
+                `₹${Number(value) / 1000}k`
+              }
+              axisLine={{
+                stroke: "#E5E5DD",
+              }}
+              tickLine={{
+                stroke: "#E5E5DD",
+              }}
+            />
 
-          <XAxis dataKey="month" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E5E5DD",
+                borderRadius: "12px",
+                color: "#13160F",
+              }}
+              formatter={(value) => [
+                `₹${Number(value).toLocaleString()}`,
+                "Revenue",
+              ]}
+            />
 
-          <Tooltip />
-
-          <Line
-            type="monotone"
-            dataKey="sales"
-            stroke="#06b6d4"
-            strokeWidth={4}
-          />
-
-        </LineChart>
-
-      </ResponsiveContainer>
-
+            <Line
+              type="monotone"
+              dataKey="sales"
+              stroke="#5C8A05"
+              strokeWidth={3}
+              dot={{
+                r: 4,
+                fill: "#5C8A05",
+              }}
+              activeDot={{
+                r: 6,
+                fill: "#AAD10A",
+              }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

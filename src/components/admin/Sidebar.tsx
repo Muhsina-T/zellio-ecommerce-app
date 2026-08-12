@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
+  ChartNoAxesCombined,
   RotateCcw,
 } from "lucide-react";
 
@@ -26,10 +27,16 @@ export default function Sidebar() {
       path: "/admin/orders",
     },
     {
+      name: "Analytics",
+      icon: ChartNoAxesCombined,
+      path: "/admin/analytics",
+    },
+    {
       name: "Returns",
       icon: RotateCcw,
       path: "/admin/returns",
     },
+
   ];
 
 

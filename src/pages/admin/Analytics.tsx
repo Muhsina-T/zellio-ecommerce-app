@@ -1,98 +1,229 @@
+import { useEffect, useState } from "react";
+
+
 import {
-  DollarSign,
+  IndianRupee,
   ShoppingCart,
   Users,
   RotateCcw,
+  Package,
+  TrendingUp,
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
-
 import AnalyticsCard from "../../components/admin/AnalyticsCard";
-
 import RevenueChart from "../../components/admin/RevenueChart";
-
 import TopProducts from "../../components/admin/TopProducts";
-
 import LowStockTable from "../../components/admin/LowStockTable";
-
 import RecentActivity from "../../components/admin/RecentActivity";
 
-import useOrder from "../../hooks/useOrder";
-
+import useProducts from "../../hooks/useProducts";
 import useReturn from "../../hooks/useReturn";
 
+import api from "../../api/api";
+import type { Order } from "../../types/Order";
+
 export default function Analytics() {
-
-  const { orders } = useOrder();
-
+  
   const { returns } = useReturn();
+  const { products } = useProducts();
+
+  const [orders, setOrders] = useState<Order[]>([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const fetchAdminOrders = async () => {
+    try {
+      const response = await api.get("/orders/admin/all");
+
+      
+
+      setOrders(response.data);
+    } catch (error) {
+      console.error(
+        "Failed to fetch admin orders:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  void fetchAdminOrders();
+}, []);
 
   const revenue = orders.reduce(
-    (sum, order) => sum + order.total,
+    (sum, order) => sum + Number(order.total || 0),
+    0,
+  );
+
+  const profit = orders.reduce((orderProfit, order) => {
+  const profitFromOrder = (order.items || []).reduce(
+    (itemProfit, item) => {
+      const sellingPrice = Number(
+        item.sellingPrice || 0
+      );
+
+      const costPrice = Number(
+        item.costPrice || 0
+      );
+
+      const quantity = Number(
+        item.quantity || 0
+      );
+
+      return (
+        itemProfit +
+        (sellingPrice - costPrice) * quantity
+      );
+    },
     0
   );
 
+  return orderProfit + profitFromOrder;
+}, 0);
+
   return (
-
-    <div className="flex min-h-screen bg-slate-950 text-white">
-
+    <div
+      className="
+        min-h-screen
+        bg-[#FAFAF7]
+        text-[#13160F]
+        flex
+      "
+    >
       <Sidebar />
 
-      <main className="flex-1 p-8">
+      <main
+        className="
+          flex-1
+          p-4
+          sm:p-6
+          lg:p-8
+          pb-24
+        "
+      >
+        {/* Header */}
+        <div
+          className="
+            flex
+            items-center
+            bg-white
+            lg:bg-transparent
+            border-b
+            border-[#E5E5DD]
+            lg:border-none
+            p-4
+            lg:p-0
+            -mx-4
+            sm:-mx-6
+            lg:mx-0
+            sticky
+            top-0
+            z-30
+            lg:static
+          "
+        >
+          <h1
+            className="
+              text-xl
+              lg:text-3xl
+              font-bold
+              text-[#13160F]
+            "
+          >
+            Analytics
+          </h1>
+        </div>
 
-        <h1 className="text-5xl font-bold mb-10">
+        {/* Spacer */}
+        <div className="h-6 lg:h-8"></div>
 
-          Analytics
-
-        </h1>
-
-        <div className="grid lg:grid-cols-4 gap-6 mb-8">
-
+        {/* Analytics Cards */}
+        <div
+          className="
+            grid
+            grid-cols-3
+            lg:grid-cols-6
+            gap-3
+            sm:gap-4
+            lg:gap-6
+            mb-8
+          "
+        >
           <AnalyticsCard
             title="Revenue"
             value={`₹${revenue.toLocaleString()}`}
-            icon={<DollarSign size={35} />}
-            color="text-cyan-400"
+            icon={<IndianRupee size={18} />}
+            color="text-[#5C8A05]"
+            size="small"
+          />
+
+          <AnalyticsCard
+            title="Profit"
+            value={`₹${profit.toLocaleString()}`}
+            icon={<TrendingUp size={18} />}
+            color="text-[#5C8A05]"
+            size="small"
+          />
+
+          <AnalyticsCard
+            title="Products"
+            value={products.length}
+            icon={<Package size={18} />}
+            color="text-[#AAD10A]"
+            size="small"
           />
 
           <AnalyticsCard
             title="Orders"
-            value={orders.length}
-            icon={<ShoppingCart size={35} />}
-            color="text-green-400"
+            value={loading ? "..." : orders.length}
+            icon={<ShoppingCart size={18} />}
+            color="text-[#AAD10A]"
+            size="small"
           />
 
           <AnalyticsCard
             title="Customers"
             value="245"
-            icon={<Users size={35} />}
-            color="text-yellow-400"
+            icon={<Users size={18} />}
+            color="text-[#B88A2D]"
+            size="small"
           />
 
           <AnalyticsCard
             title="Returns"
             value={returns.length}
-            icon={<RotateCcw size={35} />}
-            color="text-red-400"
+            icon={<RotateCcw size={18} />}
+            color="text-red-500"
+            size="small"
           />
-
         </div>
 
-        <RevenueChart />
+        {/* Revenue Chart */}
+<div className="mb-8">
+  <RevenueChart orders={orders} />
+</div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mt-8">
+{/* Analytics Sections */}
+<div
+  className="
+    grid
+    xl:grid-cols-3
+    gap-8
+  "
+>
+  <TopProducts orders={orders} />
 
-          <TopProducts />
+  <LowStockTable />
 
-          <LowStockTable />
-
-          <RecentActivity />
-
-        </div>
-
+  <RecentActivity
+    orders={orders}
+    returns={returns}
+    products={products}
+  />
+</div>
       </main>
-
     </div>
-
   );
 }

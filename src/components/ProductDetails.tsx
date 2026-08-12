@@ -23,16 +23,20 @@ export default function ProductDetails({ product }: Props) {
     id: Number(product.id ?? 0),
     storage: product.storage,
     color: product.color,
+    costPrice: product.costPrice,
     price: product.price,
     image: product.image,
   };
 
-  const [selectedVariant, setSelectedVariant] = useState<Variant>(initialVariant);
+  const [selectedVariant, setSelectedVariant] =
+    useState<Variant>(initialVariant);
 
   const navigate = useNavigate();
 
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const isOutOfStock = Number(product.stock || 0) <= 0;
+
   // const reviews = product.reviews ?? [];
   return (
     <div
@@ -43,7 +47,9 @@ export default function ProductDetails({ product }: Props) {
   "
     >
       <ProductGallery
-        variants={product.variants?.length ? product.variants : [initialVariant]}
+        variants={
+          product.variants?.length ? product.variants : [initialVariant]
+        }
         selectedVariant={selectedVariant}
         onSelectVariant={setSelectedVariant}
       />
@@ -120,6 +126,28 @@ export default function ProductDetails({ product }: Props) {
           ₹{Number(selectedVariant?.price || product.price).toLocaleString()}
         </h2>
 
+        {isOutOfStock && (
+          <div className="mt-4">
+            <span
+              className="
+        inline-flex
+        items-center
+        rounded-full
+        bg-red-50
+        border
+        border-red-200
+        px-4
+        py-2
+        text-sm
+        font-semibold
+        text-red-600
+      "
+            >
+              Out of Stock
+            </span>
+          </div>
+        )}
+
         {/* Variant Details */}
 
         <div
@@ -143,6 +171,18 @@ export default function ProductDetails({ product }: Props) {
           </p>
         </div>
 
+        {/* <div className="mt-4">
+          {isOutOfStock ? (
+            <span className="inline-block bg-red-100 text-red-600 px-4 py-2 rounded-xl font-semibold">
+              Out of Stock
+            </span>
+          ) : (
+            <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-xl font-semibold">
+              In Stock
+            </span>
+          )}
+        </div> */}
+
         {/* Buttons */}
 
         <div
@@ -155,24 +195,29 @@ export default function ProductDetails({ product }: Props) {
       "
         >
           <button
+            disabled={isOutOfStock}
             onClick={() => {
+              if (isOutOfStock) {
+                toast.error("This product is out of stock");
+                return;
+              }
+
               if (!user) {
                 toast.error("Please login first");
                 navigate("/login");
                 return;
               }
 
-              addToCart({
-                ...product,
-
-                image: selectedVariant.image,
-
-                price: Number(selectedVariant.price),
-
-                storage: selectedVariant.storage,
-
-                color: selectedVariant.color,
-              });
+              addToCart(
+                {
+                  ...product,
+                  image: selectedVariant.image,
+                  price: Number(selectedVariant.price),
+                  storage: selectedVariant.storage,
+                  color: selectedVariant.color,
+                },
+                selectedVariant.id,
+              );
 
               toast.success(`${product.name} added to cart!`);
 
@@ -182,66 +227,81 @@ export default function ProductDetails({ product }: Props) {
                 setAdded(false);
               }, 1500);
             }}
-            className="
-        bg-[#AAD10A]
-        text-[#0A0D0A]
-        px-4
-        py-3
-        lg:px-8
-        lg:py-4
-        rounded-xl
-        lg:rounded-2xl
-        font-semibold
-        text-sm
-        lg:text-base
-        hover:bg-[#C8EE2C]
-        transition
-        flex-1
-        "
+            className={`
+    px-4
+    py-3
+    lg:px-8
+    lg:py-4
+    rounded-xl
+    lg:rounded-2xl
+    font-semibold
+    text-sm
+    lg:text-base
+    transition
+    flex-1
+
+    ${
+      isOutOfStock
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-[#AAD10A] text-[#0A0D0A] hover:bg-[#C8EE2C]"
+    }
+  `}
           >
-            {added ? "✓ Added to Cart" : "Add To Cart"}
+            {isOutOfStock
+              ? "Out of Stock"
+              : added
+                ? "✓ Added to Cart"
+                : "Add To Cart"}
           </button>
 
           <button
+            disabled={isOutOfStock}
             onClick={() => {
+              if (isOutOfStock) {
+                toast.error("This product is out of stock");
+                return;
+              }
+
               if (!user) {
                 toast.error("Please login first");
                 navigate("/login");
                 return;
               }
 
-              addToCart({
-                ...product,
-
-                image: selectedVariant.image,
-
-                price: Number(selectedVariant.price),
-
-                storage: selectedVariant.storage,
-
-                color: selectedVariant.color,
-              });
+              addToCart(
+                {
+                  ...product,
+                  image: selectedVariant.image,
+                  price: Number(selectedVariant.price),
+                  storage: selectedVariant.storage,
+                  color: selectedVariant.color,
+                },
+                selectedVariant.id,
+              );
 
               navigate("/checkout");
             }}
-            className="
-        bg-[#13160F]
-        text-white
-        px-4
-        py-3
-        lg:px-8
-        lg:py-4
-        rounded-xl
-        lg:rounded-2xl
-        font-semibold
-        text-sm
-        lg:text-base
-        hover:bg-[#3F443A]
-        transition
-        flex-1
-        "
+            className={`
+    px-4
+    py-3
+    lg:px-8
+    lg:py-4
+    rounded-xl
+    lg:rounded-2xl
+    font-semibold
+    text-sm
+    lg:text-base
+    transition
+    flex-1
+
+    ${
+      isOutOfStock
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-[#13160F] text-white hover:bg-[#3F443A]"
+    }
+  `}
           >
-            Buy Now
+            {isOutOfStock ? "Buy Now" : "Buy Now"}
           </button>
         </div>
 

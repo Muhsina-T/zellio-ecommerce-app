@@ -66,7 +66,7 @@ export default function OrderTable() {
                   Order ID
                 </p>
                 <p className="mt-2 text-base font-medium text-[#13160F]">
-                  {order._id}
+                  {order.orderNumber}
                 </p>
               </div>
               <div className="text-right">

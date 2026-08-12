@@ -9,7 +9,7 @@ import useAuth from "../hooks/useAuth";
 type CartContextType = {
   cart: CartItem[];
 
-  addToCart: (product: Product) => Promise<void>;
+  addToCart: (product: Product, variantId: number) => Promise<void>;
 
   removeFromCart: (id: string) => Promise<void>;
 
@@ -23,7 +23,7 @@ type CartContextType = {
 };
 
 export const CartContext = createContext<CartContextType | undefined>(
-  undefined
+  undefined,
 );
 
 type Props = {
@@ -32,13 +32,8 @@ type Props = {
 
 export default function CartProvider({ children }: Props) {
   const { user } = useAuth();
-  
 
   const [cart, setCart] = useState<CartItem[]>([]);
-
-  
-
-  
 
   async function fetchCart() {
     try {
@@ -51,25 +46,29 @@ export default function CartProvider({ children }: Props) {
   }
 
   useEffect(() => {
-  if (user) {
-    void fetchCart();
-  } else {
-    setCart([]);
-  }
-}, [user]);
-
-  async function addToCart(product: Product) {
-    try {
-      await api.post("/cart", {
-        productId: product._id,
-        quantity: 1,
-      });
-
-      await fetchCart();
-    } catch (error) {
-      console.error(error);
+    if (user) {
+      void fetchCart();
+    } else {
+      setCart([]);
     }
+  }, [user]);
+
+  async function addToCart(
+  product: Product,
+  variantId: number
+) {
+  try {
+    await api.post("/cart", {
+      productId: product._id,
+      variantId: variantId,
+      quantity: 1,
+    });
+
+    await fetchCart();
+  } catch (error) {
+    console.error(error);
   }
+}
 
   async function removeFromCart(id: string) {
     try {
@@ -114,10 +113,16 @@ export default function CartProvider({ children }: Props) {
     }
   }
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+ const total = cart.reduce(
+  (sum, item) => {
+    const variant = item.product.variants?.find(
+      (v) => v.id === item.variantId
+    );
+
+    return sum + (variant?.price || item.product.price) * item.quantity;
+  },
+  0
+);
 
   return (
     <CartContext.Provider

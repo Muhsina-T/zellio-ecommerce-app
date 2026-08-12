@@ -37,7 +37,7 @@ export default function OrderRow({
         font-medium
         "
       >
-        {order._id}
+        {order.orderNumber}
       </td>
 
 

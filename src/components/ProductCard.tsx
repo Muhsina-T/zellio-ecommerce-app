@@ -13,6 +13,9 @@ export default function ProductCard({ product }: Props) {
   const { wishlist, toggleWishlist } = useWishlist();
   const { user } = useAuth();
 
+  const isOutOfStock =
+  Number(product.stock || 0) <= 0;
+
   const isLiked = wishlist.some((p) => p._id === product._id);
 
   const imageSrc =
@@ -20,12 +23,31 @@ export default function ProductCard({ product }: Props) {
   product.images?.[0] ||
   `${import.meta.env.BASE_URL}images/Iphone16.png`;
 
+  {isOutOfStock && (
+  <div className="
+    absolute
+    top-3
+    left-3
+    z-10
+    rounded-full
+    bg-red-500
+    px-3
+    py-1
+    text-xs
+    font-semibold
+    text-white
+  ">
+    Out of Stock
+  </div>
+)}
+
   
   return (
     <div
   onClick={() => navigate(`/product/${product._id || product.id}`)}
   className="
   group
+  relative
   bg-white
   rounded-3xl
   overflow-hidden
@@ -177,7 +199,19 @@ export default function ProductCard({ product }: Props) {
       </div>
     </div>
 
+    {isOutOfStock ? (
+  <p className="mt-2 text-xs sm:text-sm font-semibold text-red-500">
+    Out of Stock
+  </p>
+) : (
+  <p className="mt-2 text-xs sm:text-sm text-[#5C8A05]">
+    In Stock
+  </p>
+)}
+
   </div>
+
+  
 
 
 

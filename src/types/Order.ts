@@ -1,5 +1,14 @@
-import type { CartItem } from "./Cart";
+import type { Product } from "./Product";
 
+export interface OrderItem {
+  product: Product;
+  variantId: number;
+  storage: string;
+  color: string;
+  costPrice: number;
+  sellingPrice: number;
+  quantity: number;
+}
 export interface Address {
   name: string;
   phone: string;
@@ -12,7 +21,7 @@ export interface Order {
 
   orderNumber: string;
 
-  items: CartItem[];
+  items: OrderItem[];
 
   total: number;
 

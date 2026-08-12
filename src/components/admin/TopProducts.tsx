@@ -1,46 +1,77 @@
-const products = [
-  {
-    name: "iPhone 16 Pro",
-    sales: 250,
-  },
-  {
-    name: "Galaxy S25",
-    sales: 180,
-  },
-  {
-    name: "Pixel 10",
-    sales: 150,
-  },
-];
+import type { Order } from "../../types/Order";
 
-export default function TopProducts() {
+type TopProductsProps = {
+  orders: Order[];
+};
+
+type ProductSales = {
+  name: string;
+  sales: number;
+};
+
+export default function TopProducts({
+  orders,
+}: TopProductsProps) {
+  const productSales: Record<
+    string,
+    ProductSales
+  > = {};
+
+  orders.forEach((order) => {
+    (order.items || []).forEach((item) => {
+      const productName =
+        item.product?.name || "Unknown Product";
+
+      if (!productSales[productName]) {
+        productSales[productName] = {
+          name: productName,
+          sales: 0,
+        };
+      }
+
+      productSales[productName].sales +=
+        Number(item.quantity || 0);
+    });
+  });
+
+  const topProducts = Object.values(productSales)
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 5);
+
   return (
-    <div className="bg-slate-900 rounded-3xl p-6">
+    <div className="bg-white border border-[#E5E5DD] rounded-3xl p-6 shadow-sm">
 
-      <h2 className="text-2xl font-bold mb-6">
-
+      <h2 className="text-xl lg:text-2xl font-bold mb-6 text-[#13160F]">
         Top Selling Products
-
       </h2>
 
-      {products.map((product) => (
+      {topProducts.length === 0 ? (
+        <p className="text-[#6B6F63]">
+          No sales yet
+        </p>
+      ) : (
+        topProducts.map((product) => (
+          <div
+            key={product.name}
+            className="
+              flex
+              justify-between
+              items-center
+              py-4
+              border-b
+              border-[#E5E5DD]
+            "
+          >
+            <p className="text-[#13160F]">
+              {product.name}
+            </p>
 
-        <div
-          key={product.name}
-          className="flex justify-between py-4 border-b border-slate-800"
-        >
-
-          <p>{product.name}</p>
-
-          <p className="text-cyan-400">
-
-            {product.sales} Sold
-
-          </p>
-
-        </div>
-
-      ))}
+            <p className="text-[#5C8A05] font-medium">
+              {product.sales} Sold
+            </p>
+          </div>
+        ))
+      )}
 
     </div>
   );

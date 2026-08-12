@@ -59,22 +59,25 @@ export default function OrderProvider({
     }
   }, [user]);
 
-  async function createOrder(
-    order: Order
-  ): Promise<Order | undefined> {
-    try {
-      const createdOrder = await saveOrder(order);
+ async function createOrder(
+  order: Order
+): Promise<Order | undefined> {
+  try {
+    const createdOrder = await saveOrder(order);
 
-      setOrders((prev) => [
-        createdOrder,
-        ...prev,
-      ]);
+    setOrders((prev) => [
+      createdOrder,
+      ...prev,
+    ]);
 
-      return createdOrder;
-    } catch (error) {
-      console.error(error);
-    }
+    return createdOrder;
+
+  } catch (error) {
+    console.error("Create order error:", error);
+
+    throw error;
   }
+}
 
   async function updateStatus(
     id: string,

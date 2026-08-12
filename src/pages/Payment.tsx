@@ -23,28 +23,51 @@ export default function Payment() {
   async function confirm() {
 
     const orderData = {
+  orderNumber:
+    "ZEL" + Math.floor(100000 + Math.random() * 900000),
 
-      orderNumber:
-        "ZEL" + Math.floor(100000 + Math.random() * 900000),
+  items: cart.map((item) => {
+    const variant = item.product.variants?.find(
+      (v) => v.id === item.variantId
+    );
 
-      items: cart,
+    return {
+      product: item.product,
 
-      total,
+      variantId: item.variantId,
 
-      address: {
-        name: "Customer",
-        phone: "",
-        address: "",
-      },
+      storage:
+        variant?.storage || item.product.storage,
 
-      payment: method,
+      color:
+        variant?.color || item.product.color,
 
-      status: "Processing" as const,
+      costPrice:
+        Number(variant?.costPrice || 0),
 
-      canReturn: true,
+      sellingPrice:
+        Number(variant?.price || item.product.price),
 
-      date: new Date().toISOString(),
+      quantity: item.quantity,
     };
+  }),
+
+  total,
+
+  address: {
+    name: "Customer",
+    phone: "",
+    address: "",
+  },
+
+  payment: method,
+
+  status: "Processing" as const,
+
+  canReturn: true,
+
+  date: new Date().toISOString(),
+};
 
 
     // COD PAYMENT

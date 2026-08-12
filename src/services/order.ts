@@ -6,7 +6,7 @@ import type { Order } from "../types/Order";
 export async function getOrders(): Promise<Order[]> {
   try {
     const res = await api.get("/orders");
-    console.log("Orders fetched:", res.data);
+    
     return res.data;
   } catch (error) {
     throw new Error("Failed to fetch orders");

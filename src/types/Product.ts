@@ -2,6 +2,7 @@ export type Variant = {
   id: number;
   storage: string;
   color: string;
+  costPrice: number;
   price: number;
   image: string;
 };
@@ -28,6 +29,8 @@ export interface Product {
 
   storage: string;
   color: string;
+
+  costPrice: number;
   price: number;
 
   description: string;

@@ -8,6 +8,10 @@ type Props = {
 export default function CartItem({ item }: Props) {
   const { increase, decrease, removeFromCart } = useCart();
 
+  const variant = item.product.variants?.find(
+  (v) => v.id === item.variantId
+);
+
   return (
    <div
   className="
@@ -51,10 +55,10 @@ export default function CartItem({ item }: Props) {
       "
     >
       <img
-        src={item.product.image}
-        alt={item.product.name}
-        className="w-full h-full object-contain"
-      />
+  src={variant?.image ?? item.product.image}
+  alt={item.product.name}
+  className="w-full h-full object-contain"
+/>
     </div>
 
     <div>
@@ -62,12 +66,12 @@ export default function CartItem({ item }: Props) {
         {item.product.name}
       </h2>
 
-      <p className="text-xs lg:text-sm text-[#7A7E73] mt-1 hidden lg:block">
-        Premium Smartphone
-      </p>
+      <p className="text-xs lg:text-sm text-[#7A7E73] mt-1">
+  {variant?.storage} · {variant?.color}
+</p>
 
       <p className="mt-1 lg:mt-2 text-base lg:text-xl font-bold text-[#5C8A05]">
-        ₹{item.product.price.toLocaleString()}
+         ₹{(variant?.price ?? item.product.price).toLocaleString()}
       </p>
     </div>
   </div>
@@ -91,7 +95,7 @@ export default function CartItem({ item }: Props) {
       "
     >
       <button
-        onClick={() => decrease(item.product._id || "")}
+        onClick={() => decrease(item._id || "")}
         className="
           w-8
           h-8
@@ -123,7 +127,7 @@ export default function CartItem({ item }: Props) {
       </span>
 
       <button
-        onClick={() => increase(item.product._id || "")}
+        onClick={() => increase(item._id || "")}
         className="
           w-8
           h-8
@@ -143,7 +147,7 @@ export default function CartItem({ item }: Props) {
     </div>
 
     <button
-      onClick={() => removeFromCart(item.product._id || "")}
+      onClick={() => removeFromCart(item._id || "")}
       className="
         w-full
         lg:w-auto
