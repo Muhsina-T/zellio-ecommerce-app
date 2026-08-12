@@ -39,4 +39,7 @@ export interface Product {
   reviews?: Review[];
 
   variants?: Variant[];
+
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -25,54 +25,86 @@ export default function RecentActivity({
   returns,
   products,
 }: RecentActivityProps) {
-
   const activities: Activity[] = [];
 
-  // Recent orders
-  orders.slice(0, 3).forEach((order) => {
+  // =========================
+  // ORDERS
+  // =========================
+
+  orders.forEach((order) => {
+    const date = order.createdAt || order.date;
+
+    if (!date) return;
+
     activities.push({
-      id: `order-${order._id || order.id}`,
+      id: `order-${order._id || order.id || order.orderNumber}`,
       type: "order",
       title: `New Order ${order.orderNumber}`,
-      date: order.createdAt || order.date,
+      date,
     });
   });
 
-  // Recent returns
-  returns.slice(0, 3).forEach((returnItem: any) => {
+  // =========================
+  // RETURNS
+  // =========================
+
+  returns.forEach((returnItem: any) => {
+    const date =
+      returnItem.createdAt ||
+      returnItem.date;
+
+    if (!date) return;
+
     activities.push({
       id: `return-${returnItem._id || returnItem.id}`,
       type: "return",
       title: "Return Request",
-      date:
-        returnItem.createdAt ||
-        returnItem.date ||
-        new Date().toISOString(),
+      date,
     });
   });
 
-  // Recent products
-  products.slice(0, 3).forEach((product) => {
+  // =========================
+  // PRODUCTS
+  // =========================
+
+  products.forEach((product) => {
+    const date = product.createdAt;
+
+    if (!date) return;
+
     activities.push({
-      id: `product-${product._id}`,
+      id: `product-${product._id || product.id}`,
       type: "product",
       title: `Product Added: ${product.name}`,
-      date: new Date().toISOString(),
+      date,
     });
   });
 
-  // Newest first
+  // =========================
+  // SORT NEWEST FIRST
+  // =========================
+
   activities.sort(
     (a, b) =>
       new Date(b.date).getTime() -
       new Date(a.date).getTime()
   );
 
+  // Only show latest 5
   const recentActivities = activities.slice(0, 5);
 
+  // =========================
+  // TIME AGO
+  // =========================
+
   const getTimeAgo = (date: string) => {
-    const diff =
-      Date.now() - new Date(date).getTime();
+    const timestamp = new Date(date).getTime();
+
+    if (Number.isNaN(timestamp)) {
+      return "Unknown time";
+    }
+
+    const diff = Date.now() - timestamp;
 
     const minutes = Math.floor(
       diff / (1000 * 60)
@@ -98,8 +130,24 @@ export default function RecentActivity({
 
     const days = Math.floor(hours / 24);
 
-    return `${days} ${
-      days === 1 ? "day" : "days"
+    if (days < 30) {
+      return `${days} ${
+        days === 1 ? "day" : "days"
+      } ago`;
+    }
+
+    const months = Math.floor(days / 30);
+
+    if (months < 12) {
+      return `${months} ${
+        months === 1 ? "month" : "months"
+      } ago`;
+    }
+
+    const years = Math.floor(months / 12);
+
+    return `${years} ${
+      years === 1 ? "year" : "years"
     } ago`;
   };
 
@@ -123,19 +171,29 @@ export default function RecentActivity({
               className="flex gap-4"
             >
 
+              {/* ORDER ICON */}
               {activity.type === "order" && (
-                <ShoppingBag className="text-[#5C8A05]" />
+                <ShoppingBag
+                  className="text-[#5C8A05] shrink-0"
+                />
               )}
 
+              {/* RETURN ICON */}
               {activity.type === "return" && (
-                <RotateCcw className="text-[#B88A2D]" />
+                <RotateCcw
+                  className="text-[#B88A2D] shrink-0"
+                />
               )}
 
+              {/* PRODUCT ICON */}
               {activity.type === "product" && (
-                <Package className="text-[#AAD10A]" />
+                <Package
+                  className="text-[#AAD10A] shrink-0"
+                />
               )}
 
-              <div>
+              <div className="min-w-0">
+
                 <p className="text-[#13160F]">
                   {activity.title}
                 </p>
@@ -143,6 +201,7 @@ export default function RecentActivity({
                 <span className="text-[#6B6F63] text-sm">
                   {getTimeAgo(activity.date)}
                 </span>
+
               </div>
 
             </div>
