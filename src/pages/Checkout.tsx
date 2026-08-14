@@ -126,87 +126,74 @@ export default function Checkout() {
   }
 
   async function processOrderCreation(paymentDetails?: any) {
-  try {
-    const createdOrder = await createOrder({
-      id: generateId(),
+    try {
+      const createdOrder = await createOrder({
+        id: generateId(),
 
-      orderNumber:
-        "ZEL" +
-        Math.floor(100000 + Math.random() * 900000),
+        orderNumber: "ZEL" + Math.floor(100000 + Math.random() * 900000),
 
-      items: cart.map((item) => {
-        const variant =
-          item.product.variants?.find(
-            (v) => v.id === item.variantId
+        items: cart.map((item) => {
+          const variant = item.product.variants?.find(
+            (v) => v.id === item.variantId,
           );
 
-        return {
-          product: item.product,
+          return {
+            product: item.product,
 
-          variantId: item.variantId,
+            variantId: item.variantId,
 
-          storage:
-            variant?.storage ||
-            item.product.storage,
+            storage: variant?.storage || item.product.storage,
 
-          color:
-            variant?.color ||
-            item.product.color,
+            color: variant?.color || item.product.color,
 
-          costPrice:
-            Number(variant?.costPrice || 0),
+            costPrice: Number(variant?.costPrice || 0),
 
-          sellingPrice:
-            Number(
-              variant?.price ||
-              item.product.price
-            ),
+            sellingPrice: Number(variant?.price || item.product.price),
 
-          quantity: item.quantity,
-        };
-      }),
+            quantity: item.quantity,
+          };
+        }),
 
-      total: finalPrice,
+        total: finalPrice,
 
-      address: {
-        name: address.name,
-        phone: address.phone,
-        address: `${address.address}, ${address.additionalAddress}`,
-      },
+        address: {
+          name: address.name,
+          phone: address.phone,
+          address: `${address.address}, ${address.additionalAddress}`,
+        },
 
-      payment: paymentDetails
-        ? {
-            method,
-            status: "Paid",
-            ...paymentDetails,
-          }
-        : method,
+        payment: paymentDetails
+          ? {
+              method,
+              status: "Paid",
+              ...paymentDetails,
+            }
+          : method,
 
-      status: "Processing",
+        status: "Processing",
 
-      date: new Date().toISOString(),
+        date: new Date().toISOString(),
 
-      canReturn: true,
-    });
+        canReturn: true,
+      });
 
-    if (!createdOrder) {
-      return;
+      if (!createdOrder) {
+        return;
+      }
+
+      await clearCart();
+
+      navigate("/orders");
+    } catch (error: any) {
+      console.error("Order creation error:", error);
+
+      setError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Unable to place order",
+      );
     }
-
-    await clearCart();
-
-    navigate("/orders");
-
-  } catch (error: any) {
-    console.error("Order creation error:", error);
-
-    setError(
-      error?.response?.data?.message ||
-      error?.message ||
-      "Unable to place order"
-    );
   }
-}
 
   return (
     <div
@@ -280,7 +267,7 @@ export default function Checkout() {
             <div className="space-y-4">
               {cart.map((item) => (
                 <div
-                  key={item.product._id}
+                  key={`${item.product._id}-${item.variantId}`}
                   className="
                 flex
                 flex-col
@@ -323,7 +310,12 @@ export default function Checkout() {
                   sm:text-xl
                 "
                   >
-                    ₹{(item.product.price * item.quantity).toLocaleString()}
+                    ₹
+                    {(
+                      (item.product.variants?.find(
+                        (v) => v.id === item.variantId,
+                      )?.price ?? item.product.price) * item.quantity
+                    ).toLocaleString()}
                   </p>
                 </div>
               ))}

@@ -1,5 +1,6 @@
 import api from "../api/api";
 import type { Order } from "../types/Order";
+import axios from "axios";
 
 
 // Get logged-in user's orders
@@ -21,6 +22,18 @@ export async function saveOrder(order: Order): Promise<Order> {
 
     return res.data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Order API Error:", error.response?.data);
+      console.error("Status:", error.response?.status);
+      console.error("Request data:", order);
+      
+      throw new Error(
+        error.response?.data?.message || "Failed to place order"
+      );
+    }
+
+    console.error("Unexpected order error:", error);
+
     throw new Error("Failed to place order");
   }
 }

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   ResponsiveContainer,
   LineChart,
@@ -5,141 +7,180 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
 } from "recharts";
 
-import type { Order } from "../../types/Order";
+import api from "../../api/api";
 
-type RevenueChartProps = {
-  orders: Order[];
+type DailyAnalytics = {
+  date: string;
+  revenue: number;
+  profit: number;
 };
 
-export default function RevenueChart({
-  orders,
-}: RevenueChartProps) {
-  // Create last 6 months
-  const now = new Date();
+export default function RevenueChart() {
+  const [data, setData] = useState<DailyAnalytics[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const months = Array.from({ length: 6 }, (_, index) => {
-    const date = new Date(
-      now.getFullYear(),
-      now.getMonth() - (5 - index),
-      1
-    );
+  useEffect(() => {
+    const fetchWeeklyAnalytics = async () => {
+      try {
+        setLoading(true);
 
-    return {
-      month: date.toLocaleString("en-US", {
-        month: "short",
-      }),
-      year: date.getFullYear(),
-      monthNumber: date.getMonth(),
-    };
-  });
-
-  // Calculate revenue for each month
-  const data = months.map((month) => {
-    const monthlyRevenue = orders
-      .filter((order) => {
-        const orderDate = new Date(
-          order.createdAt || order.date
+        const response = await api.get(
+          "/analytics/weekly"
         );
 
-        return (
-          orderDate.getFullYear() === month.year &&
-          orderDate.getMonth() === month.monthNumber
+        setData(
+          response.data.map(
+            (item: DailyAnalytics) => ({
+              date: item.date,
+              revenue: Number(item.revenue || 0),
+              profit: Number(item.profit || 0),
+            })
+          )
         );
-      })
-      .reduce(
-        (sum, order) =>
-          sum + Number(order.total || 0),
-        0
-      );
-
-    return {
-      month: month.month,
-      sales: monthlyRevenue,
+      } catch (error) {
+        console.error(
+          "Failed to fetch weekly analytics:",
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
     };
-  });
+
+    void fetchWeeklyAnalytics();
+  }, []);
 
   return (
-    <div className="w-full rounded-2xl lg:rounded-3xl bg-white border border-[#E5E5DD] p-4 sm:p-5 lg:p-6 shadow-sm">
-
-      <h2 className="mb-4 text-lg font-bold text-[#13160F] sm:text-xl lg:mb-6 lg:text-2xl">
-        Monthly Revenue
+    <div
+      className="
+        w-full
+        rounded-2xl
+        lg:rounded-3xl
+        bg-white
+        border
+        border-[#E5E5DD]
+        p-4
+        sm:p-5
+        lg:p-6
+        shadow-sm
+      "
+    >
+      <h2
+        className="
+          mb-4
+          text-lg
+          font-bold
+          text-[#13160F]
+          sm:text-xl
+          lg:mb-6
+          lg:text-2xl
+        "
+      >
+        Daily Revenue & Profit
       </h2>
 
-      <div className="w-full h-[220px] sm:h-[260px] lg:h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{
-              top: 10,
-              right: 10,
-              left: 0,
-              bottom: 5,
-            }}
+      {loading ? (
+        <div
+          className="
+            h-[250px]
+            sm:h-[280px]
+            lg:h-[320px]
+            flex
+            items-center
+            justify-center
+            text-[#7A7E73]
+          "
+        >
+          Loading analytics...
+        </div>
+      ) : (
+        <div
+          className="
+            w-full
+            h-[250px]
+            sm:h-[280px]
+            lg:h-[320px]
+          "
+        >
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
           >
-            <XAxis
-              dataKey="month"
-              tick={{
-                fontSize: 12,
-                fill: "#6B6F63",
+            <LineChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 10,
+                left: 0,
+                bottom: 5,
               }}
-              tickMargin={8}
-              axisLine={{
-                stroke: "#E5E5DD",
-              }}
-              tickLine={{
-                stroke: "#E5E5DD",
-              }}
-            />
+            >
+              <XAxis
+                dataKey="date"
+                tick={{
+                  fontSize: 12,
+                  fill: "#6B6F63",
+                }}
+                tickMargin={8}
+                axisLine={{
+                  stroke: "#E5E5DD",
+                }}
+              />
 
-            <YAxis
-              tick={{
-                fontSize: 11,
-                fill: "#6B6F63",
-              }}
-              width={55}
-              tickFormatter={(value) =>
-                `₹${Number(value) / 1000}k`
-              }
-              axisLine={{
-                stroke: "#E5E5DD",
-              }}
-              tickLine={{
-                stroke: "#E5E5DD",
-              }}
-            />
+              <YAxis
+                tick={{
+                  fontSize: 11,
+                  fill: "#6B6F63",
+                }}
+                width={60}
+                tickFormatter={(value) =>
+                  `₹${Number(value) / 1000}k`
+                }
+              />
 
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E5E5DD",
-                borderRadius: "12px",
-                color: "#13160F",
-              }}
-              formatter={(value) => [
-                `₹${Number(value).toLocaleString()}`,
-                "Revenue",
-              ]}
-            />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E5DD",
+                  borderRadius: "12px",
+                  color: "#13160F",
+                }}
+                formatter={(value, name) => [
+                  `₹${Number(value).toLocaleString(
+                    "en-IN"
+                  )}`,
+                  name === "revenue"
+                    ? "Revenue"
+                    : "Profit",
+                ]}
+              />
 
-            <Line
-              type="monotone"
-              dataKey="sales"
-              stroke="#5C8A05"
-              strokeWidth={3}
-              dot={{
-                r: 4,
-                fill: "#5C8A05",
-              }}
-              activeDot={{
-                r: 6,
-                fill: "#AAD10A",
-              }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+              <Legend />
+
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#5C8A05"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+
+              <Line
+                type="monotone"
+                dataKey="profit"
+                stroke="#B88A2D"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-
 import {
   IndianRupee,
   ShoppingCart,
@@ -13,6 +12,7 @@ import {
 import Sidebar from "../../components/admin/Sidebar";
 import AnalyticsCard from "../../components/admin/AnalyticsCard";
 import RevenueChart from "../../components/admin/RevenueChart";
+import DailyReport from "../../components/admin/DailyReport";
 import TopProducts from "../../components/admin/TopProducts";
 import LowStockTable from "../../components/admin/LowStockTable";
 import RecentActivity from "../../components/admin/RecentActivity";
@@ -24,64 +24,58 @@ import api from "../../api/api";
 import type { Order } from "../../types/Order";
 
 export default function Analytics() {
-  
   const { returns } = useReturn();
   const { products } = useProducts();
 
   const [orders, setOrders] = useState<Order[]>([]);
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchAdminOrders = async () => {
-    try {
-      const response = await api.get("/orders/admin/all");
+  const [dailyAnalytics, setDailyAnalytics] = useState({
+    revenue: 0,
+    profit: 0,
+    orders: 0,
+  });
 
-      
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const today = new Date();
 
-      setOrders(response.data);
-    } catch (error) {
-      console.error(
-        "Failed to fetch admin orders:",
-        error
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+        const date = [
+          today.getFullYear(),
+          String(today.getMonth() + 1).padStart(2, "0"),
+          String(today.getDate()).padStart(2, "0"),
+        ].join("-");
 
-  void fetchAdminOrders();
-}, []);
+        const [ordersResponse, analyticsResponse] = await Promise.all([
+          api.get("/orders/admin/all"),
 
-  const revenue = orders.reduce(
-    (sum, order) => sum + Number(order.total || 0),
-    0,
-  );
+          api.get("/analytics/daily", {
+            params: {
+              date,
+            },
+          }),
+        ]);
+        console.log("Daily analytics response:", analyticsResponse.data);
 
-  const profit = orders.reduce((orderProfit, order) => {
-  const profitFromOrder = (order.items || []).reduce(
-    (itemProfit, item) => {
-      const sellingPrice = Number(
-        item.sellingPrice || 0
-      );
+        setOrders(ordersResponse.data);
 
-      const costPrice = Number(
-        item.costPrice || 0
-      );
+        setDailyAnalytics({
+          revenue: Number(analyticsResponse.data.revenue || 0),
 
-      const quantity = Number(
-        item.quantity || 0
-      );
+          profit: Number(analyticsResponse.data.profit || 0),
 
-      return (
-        itemProfit +
-        (sellingPrice - costPrice) * quantity
-      );
-    },
-    0
-  );
+          orders: Number(analyticsResponse.data.orders || 0),
+        });
+      } catch (error) {
+        console.error("Failed to fetch analytics:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return orderProfit + profitFromOrder;
-}, 0);
+    void fetchAnalytics();
+  }, []);
 
   return (
     <div
@@ -104,6 +98,7 @@ useEffect(() => {
         "
       >
         {/* Header */}
+
         <div
           className="
             flex
@@ -137,9 +132,11 @@ useEffect(() => {
         </div>
 
         {/* Spacer */}
+
         <div className="h-6 lg:h-8"></div>
 
         {/* Analytics Cards */}
+
         <div
           className="
             grid
@@ -153,7 +150,7 @@ useEffect(() => {
         >
           <AnalyticsCard
             title="Revenue"
-            value={`₹${revenue.toLocaleString()}`}
+            value={`₹${dailyAnalytics.revenue.toLocaleString()}`}
             icon={<IndianRupee size={18} />}
             color="text-[#5C8A05]"
             size="small"
@@ -161,7 +158,7 @@ useEffect(() => {
 
           <AnalyticsCard
             title="Profit"
-            value={`₹${profit.toLocaleString()}`}
+            value={`₹${dailyAnalytics.profit.toLocaleString()}`}
             icon={<TrendingUp size={18} />}
             color="text-[#5C8A05]"
             size="small"
@@ -177,7 +174,7 @@ useEffect(() => {
 
           <AnalyticsCard
             title="Orders"
-            value={loading ? "..." : orders.length}
+            value={loading ? "..." : dailyAnalytics.orders}
             icon={<ShoppingCart size={18} />}
             color="text-[#AAD10A]"
             size="small"
@@ -200,29 +197,37 @@ useEffect(() => {
           />
         </div>
 
-        {/* Revenue Chart */}
-<div className="mb-8">
-  <RevenueChart orders={orders} />
-</div>
+        {/* Daily Revenue & Profit Chart */}
 
-{/* Analytics Sections */}
-<div
-  className="
-    grid
-    xl:grid-cols-3
-    gap-8
-  "
->
-  <TopProducts orders={orders} />
+        <div className="mb-8">
+          <RevenueChart />
+        </div>
 
-  <LowStockTable />
+        {/* Daily PDF Report */}
 
-  <RecentActivity
-    orders={orders}
-    returns={returns}
-    products={products}
-  />
-</div>
+        <div className="mb-8">
+          <DailyReport />
+        </div>
+
+        {/* Analytics Sections */}
+
+        <div
+          className="
+            grid
+            xl:grid-cols-3
+            gap-8
+          "
+        >
+          <TopProducts orders={orders} />
+
+          <LowStockTable />
+
+          <RecentActivity
+            orders={orders}
+            returns={returns}
+            products={products}
+          />
+        </div>
       </main>
     </div>
   );
